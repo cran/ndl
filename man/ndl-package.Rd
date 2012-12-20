@@ -27,8 +27,8 @@
 \tabular{ll}{
 Package: \tab ndl\cr
 Type: \tab Package\cr
-Version: \tab 0.1.1\cr
-Date: \tab 2011-06-23\cr
+Version: \tab 0.1.6\cr
+Date: \tab 2012-12-20\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -72,16 +72,16 @@ The key function for naive discriminative classification is
   Antti Arppe, Petar Milin and R. Harald Baayen, with contributions of
   Peter Hendrix.
 
-Maintainer: <antti.arppe@helsinki.fi>
+Maintainer: Antti Arppe <antti.arppe@iki.fi>
 }
 \references{
   Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and
   Hendrix, P. and Marelli, M., An amorphous model for morphological
   processing in visual comprehension based on naive discriminative
-  learning.  Psychological Review, in press.
+  learning.  Psychological Review, 118, 438-482.
 
-  Baayen, R. H. (2011) Corpus linguistics and naive discriminative learning. 
-  Submitted to Brazilian Journal of Applied Linguistics.
+  Baayen, R. H. (2011) Corpus linguistics and naive discriminative
+  learning.  Brazilian Journal of Applied Linguistics, 11, 295-328.
 
   Arppe, A. and Baayen, R. H. (in prep.) Statistical classification
   and principles of human learning.
@@ -123,7 +123,8 @@ data(serbian)
 serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
 serbian$Outcomes <- serbian$LemmaCase
 sw <- estimateWeights(cuesOutcomes=serbian)
-activations <- estimateActivations(unique(serbian[,c("WordForm", "Cues")]), sw)
+activations <- estimateActivations(unique(serbian["Cues"]), sw)$activationMatrix
+rownames(activations) <- unique(serbian[["WordForm"]])
 
 syntax <- c("acc", "dat", "gen", "ins", "loc", "nom", "Pl",  "Sg") 
 activations2 <- activations[,!is.element(colnames(activations), syntax)]

@@ -11,7 +11,7 @@
 }
 \usage{
 estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
-   method="C")
+   method="C", max.cues=20000, max.characters=20000, max.lines=500000, \dots)
 }
 \arguments{
   \item{cuesOutcomes}{
@@ -45,6 +45,21 @@ estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
     be calculated with C using \code{cooc} (\code{"C"}: default), with two AWK
     scripts (\code{"awk"}), or within R (\code{"R"}).
   }
+  \item{max.cues}{
+    An integer specifying the overall number of distinct cues (and
+    outcomes); by default set to \code{=20000}.
+  }
+  \item{max.characters}{
+    An integer specifying the maximum character length of cues per
+    each occurrence, i.e. line in \code{cuesOutcomes}, by default set to
+    \code{=20000}.
+  }
+  \item{max.lines}{An integer specifying the maximum number of
+    lines in \code{cuesOutcomes}; by default set to \code{=500000}.
+  }
+  \item{\dots}{Control arguments to be passed along from \code{\link{ndlClassify}}
+    and/or \code{\link{ndlCrossvalidate}}.
+  }
 }
 \details{
 
@@ -53,16 +68,23 @@ estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
   \code{method="awk"}.  Otherwise, a slow R implementation can be used
   (\code{method="R"}), in which case the model may not scale up.
 
-  With the fastest C code version, the maximum length of individual
-  cue combinations is 20,000 characters (including underscores) and
-  the maximum number of unique Cues or unique Outcomes is 20,000. The
-  AWK scripts do not have these restrictions concerning their input,
-  but will only work in UNIX-like operating systems, i.e. not in
-  Windows.
+  With the fastest C code version, the default maximum length of
+  individual cue combinations is 20,000 characters (including
+  underscores), the default maximum number of unique Cues or unique
+  Outcomes is 20,000, and the default number of input lines in
+  \code{cuesOutcomes} is 500,000. These limits can be adjusted with
+  the appropriate arguments; however, that should only be done with
+  the utmost care.  The AWK scripts do not have these restrictions
+  concerning their input, but will only work in UNIX-like operating
+  systems, i.e. not in Windows.
 
-  For examples of how the \code{cuesOutcomes} data frame should
-  be structured, see the data sets \code{\link{danks}},
-  \code{\link{plurals}}, and \code{\link{serbian}}.
+  For examples of how the \code{cuesOutcomes} data frame should be
+  structured, see the data sets \code{\link{danks}},
+  \code{\link{plurals}}, and \code{\link{serbian}}. N.B. Empty
+  \code{Cues} or \code{Outcomes} (effectively having \code{length =
+  0}), e.g. \code{Cues} or \code{Outcomes} strings with an initial or
+  final underscore or two immediately adjacent underscores, will
+  result in an error.
 
 }
 \value{
@@ -70,10 +92,12 @@ estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
   and columns are outcomes.  Rows and columns are labeled.
 }
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
+
 }
 \author{
 R. H. Baayen and Petar Milin, with contributions from Antti Arppe and
@@ -118,6 +142,6 @@ Peter Hendrix.
   serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
   serbian$Outcomes <- serbian$LemmaCase
   sw <- estimateWeights(cuesOutcomes=serbian)
-  sw[1:5,1:5]
+  sw[1:5,1:6]
 }
 \keyword{ classif }

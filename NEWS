@@ -1,0 +1,127 @@
+Changes for R-package ndl
+
+Changes in version 0.1.6 (Nov 27th, 2012) (since version 0.1.1)
+Implementer: Antti Arppe <antti.arppe@iki.fi>
+
+* General: general modifications and fixes to several functions to
+  check the integrity of input (mainly argument 'cuesOutcomes'), and
+  otherwise with deal with diverse input formats with less hickups;
+  new function 'predict.ndlClassify'; user-specifiable scalability for
+  dealing with really large input files when using the C code method
+  for the calculation of Cue-Cue and Cue-Outcome co-occurrences;
+  maintainer e-mail address modified to a generic one.
+
+* acts2probs.R (acts2probs): code modified internally so that a
+  minimum activation value of 'acts.minimum.correction=1e-10' is used
+  instead when any activation value is exactly equal to 0 in input
+  'acts' (due to lack of any previously observed cues in input to
+  e.g. 'estimateActivations').
+
+* coocMatrices.c (cooc): C code fixed so that it will work with space
+  characters ' ' in Cues and Outcomes (as input 'cuesOutcomes' to
+  'estimateWeights', 'cooccurrencesCues' and/or
+  'cooccurrencesCuesOutcomes') - due to this fix the 'Outcomes',
+  'Cues' and 'Frequency' columns are now separated by single tabulator
+  characters '\t' (instead of spaces ' ') in the temporary text file:
+  'ndl_410025912.txt' through which data is passed to the C code from
+  the 'estimateWeights', 'cooccurrencesCues' and
+  'cooccurencesCuesOutcomes' functions ; C code modified so that the
+  sizes of Cues and Outcomes (and their combinations) can be specified
+  flexibly by the user in 'estimateWeights', 'cooccurrencesCues'
+  and/or 'cooccurrencesCuesOutcomes' beyond the default values
+  (max.cues=20000, max.characters=20000, max.lines=500000;
+  communicated via the temporary parameter file:
+  'ndl_par_410025912.txt'), which will allow the use of the C code
+  alternative (with 'method="C"') via greater memory allocation for
+  very large data sets on servers with (sufficient) greater capacity;
+  C code modified so that upon encountering errors (not finding the
+  parameter or data text files, or the data file exceeding
+  'max.lines'), which normally will all be detected by the calling R
+  functions but can occur if the C code is called directly, an
+  appropriate error message will be output to: 'ndl_err_410025912.txt'
+  and the execution will end gracefully with 'return' (instead of
+  'exit').
+
+* cooccurrencesCues.R (cooccurrencesCues): new arguments 'max.cues',
+  'max.characters' and 'max.lines' added and code modified so that the
+  sizes of Cues and Outcomes in input 'cuesOutcomes'can be specified
+  by the user beyond the default values (i.e. max.cues=20000,
+  max.characters=20000, max.lines=500000; communicated via the
+  temporary parameter file: 'ndl_par_410025912.txt' to the auxiliary
+  C code alternative); global option "ndl.estimateWeights" indicating
+  call from 'estimateWeights' checked so that the auxiliary functions
+  'cooccurrenceCues' and 'cooccurrenceCuesOutcomes' will not rewrite
+  the input text file: 'ndl_410025912.txt'.
+
+* cooccurrenceCuesOutcomes.R (cooccurrencesCuesOutcomes): new
+  arguments 'max.cues', 'max.characters' and 'max.lines' added and
+  code modified so that the sizes of Cues and Outcomes in input
+  'cuesOutcomes'can be specified by the user beyond the default values
+  (i.e. max.cues=20000, max.characters=20000, max.lines=500000;
+  communicated via the temporary parameter file:
+  'ndl_par_410025912.txt' to the auxiliary C code alternative); ;
+  global option "ndl.estimateWeights" indicating call from
+  'estimateWeights' checked so that the auxiliary functions
+  'cooccurrenceCues' and 'cooccurrenceCuesOutcomes' will not rewrite
+  the input text file: 'ndl_410025912.txt'.
+
+* estimateActivations.R (estimateActivations): code and output values
+  changed so that previously unseen Cues and Outcomes in input
+  'cuesOutcomes' are included in the output values, in addition to
+  'activationMatrix', as 'newCues' and 'newOutcomes', instead of these
+  being printed to standard output; in the case of such unseen Cues or
+  Outcomes a warning message is now output; code modified so that a
+  warning message is output if potential accidental 'NA' strings
+  (resulting from 'as.character(NA)') are detected among the input
+  Cues and Outcomes in 'cuesOutcomes'; code will stop with an error
+  message if any actual NA's are encountered among Cues and Outcomes
+  in 'cuesOutcomes'; code modified so that a previous undocumented
+  internal reference to 'WordForm' in input 'cuesOutcomes' is removed.
+
+* estimateWeights.R (estimateWeights): new arguments 'max.cues',
+  'max.characters' and 'max.lines' added and code modified so that the
+  sizes of Cues and Outcomes in input 'cuesOutcomes' can be specified
+  by the user beyond the default values (i.e. max.cues=20000,
+  max.characters=20000, max.lines=500000; communicated via the
+  temporary parameter file: 'ndl_par_410025912.txt' to the auxiliary
+  C code alternative); code modified so that the function will stop
+  with an error message if accidental empty cues (string-initial or
+  string-final, or multiple string-medial underscores '_'), or NA's
+  are detected in Cues or Outcomes in 'cuesOutcomes'; a warning
+  message is output if potential accidental 'NA' strings (resulting
+  from 'as.character(NA)') are detected among the input Cues and
+  Outcomes in 'cuesOutcomes'; code modified internally so that Cues
+  and Outcomes in 'cuesOutcomes' are coerced to character strings, in
+  case they might be input as factors (which may happen by default
+  when reading data with 'read.table' or 'read.csv' into R from an
+  external plain text or CSV file as a data frame); global option
+  "ndl.estimateWeights" specified as TRUE so that the auxiliary
+  functions 'cooccurrenceCues' and 'cooccurrenceCuesOutcomes' will not
+  rewrite the input text file: 'ndl_410025912.txt'; after successful
+  execution, "ndl.estimateWeights" again specified as NULL.
+
+* ndlClassify.R (ndlClassify): code modified internally so that
+  character length of response (Outcome) variable in 'formula'
+  argument is not restricted.
+
+* ndlClassify.R (print.ndlClassify): code modified so that setting
+  'max.print=NA' will print the entire 'weightMatrix' matrix.
+
+* ndlCrossvalidate.R (ndlCrossvalidate): code modified internally so
+  that the checks of the 'formula' and 'frequency' arguments do not
+  produce superfluous warnings.
+
+* ndlCuesOutcomes.R (ndlCuesOutcomes): code modified internally so
+  that character length of response (Outcome) variable in 'formula'
+  argument is not restricted.
+
+* predict.ndlClassify.R (predict.ndlClassify): new function that
+  allows for the estimation of activation-based probabilities and/or
+  the prediction of Outcomes with new, unseen data, using the weights
+  in 'weightMatrix' in an object previously fitted with 'ndlClassify'.
+
+* summary.ndlClassify.R (summary.ndlClassify): code modified so that
+  setting 'max.print=NA' will print out entire 'weights' matrix.
+
+* Documents: Manual page contents modified to correspond to changes in
+  R code; references in manual pages updated.

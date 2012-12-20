@@ -2,9 +2,13 @@ ndlCrossvalidate <- function(formula, data, frequency=NA, k=10, folds=NULL, ...)
 { call <- match.call()
   N <- NROW(data)
 
-  if(is.na(formula))
-    if(!all(colnames(data) %in% c("Frequency","Cues","Outcomes")))
-      stop("data does not have proper structure with three columns: Frequency, Cues, Outcomes\n")
+  if(class(formula)!="formula")
+    if(is.na(formula))
+      { if(!all(colnames(data) %in% c("Frequency","Cues","Outcomes")))
+          stop("Data does not have proper structure with three columns: Frequency, Cues, Outcomes.\n")
+      }
+    else
+      stop("Incorrect specification of argument 'formula'.\n")
 
   if(is.null(folds))
     { if(is.na(frequency[1]))
@@ -55,23 +59,21 @@ fits <- lapply(folds,
         cat(paste("[",getOption("ndlCrossvalidate.counter"),"]",sep=""))
         options(ndlCrossvalidate.counter=getOption("ndlCrossvalidate.counter")+1)
 
-        if(!is.na(formula))
+        if(class(formula)=="formula")
           cuesOutcomes.teach <- ndlCuesOutcomes(formula, data[-test,])
         else
           cuesOutcomes.teach <- data[-test,]
 
         weightMatrix.teach = estimateWeights(cuesOutcomes.teach, ...)
 
-        if(!is.na(formula))
+        if(class(formula)=="formula")
           cuesOutcomes.test <- ndlCuesOutcomes(formula, data[test,])
         else
           cuesOutcomes.test <- data[test,]
-
-        activationMatrix.test = estimateActivations(cuesOutcomes.test, weightMatrix.teach, unique=FALSE) 
+        activationMatrix.test = estimateActivations(cuesOutcomes.test, weightMatrix.teach, ...)$activationMatrix 
 
         ndl.test <- list(activationMatrix = activationMatrix.test,  weightMatrix = weightMatrix.teach, cuesOutcomes = cuesOutcomes.test)
-
-        test.result <- ndlStatistics(ndl.test)
+        test.result <- ndlStatistics(ndl.test, ...)
         names(test.result)[which(names(test.result)=="n.data")]="n.test"
 
         return(test.result)

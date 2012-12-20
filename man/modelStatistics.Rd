@@ -14,7 +14,7 @@
   modelStatistics(observed, predicted, frequency=NA, p.values,
      n.data, n.predictors, outcomes=levels(as.factor(observed)),
      p.normalize=TRUE, cross.tabulation=TRUE, 
-     p.zero.correction=1/(nrow(p.values)*ncol(p.values))^2)
+     p.zero.correction=1/(NROW(p.values)*NCOL(p.values))^2)
 }
 \arguments{
   \item{observed}{observed values of the response variable}

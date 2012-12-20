@@ -32,7 +32,12 @@
   }
 }
 \references{
-Baayen, R. H., Milin, P., Filipovic Durdevic, D., Hendrix, P. and Marelli, M. (2011), An amorphous model for morphological processing in visual comprehension based on naive discriminative learning. Psychological Review, in press.
+
+Baayen, R. H., Milin, P., Filipovic Durdevic, D., Hendrix, P. and
+Marelli, M. (2011), An amorphous model for morphological processing in
+visual comprehension based on naive discriminative
+learning. Psychological Review, 118, 438-482.
+
 }
 \examples{
 # calculate the weight matrix for the full set of Serbian nouns
@@ -42,8 +47,10 @@ serbian$Outcomes <- serbian$LemmaCase
 sw <- estimateWeights(cuesOutcomes=serbian)
 
 # calculate the meaning activations for all unique word forms
-activations <- estimateActivations(unique(serbian[,c("WordForm", "Cues")]),sw)
+activations <- estimateActivations(unique(serbian["Cues"]),sw)$activationMatrix
+rownames(activations) <- unique(serbian[["WordForm"]])
 activations <- activations + abs(min(activations))
+activations[1:5,1:6]
 
 # calculate simulated latencies for the experimental materials
 

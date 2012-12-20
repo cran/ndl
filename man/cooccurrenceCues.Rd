@@ -8,7 +8,8 @@
   Baayen et al. 2011 for an example
 }
 \usage{
-cooccurrenceCues(cuesOutcomes, duplicates=FALSE, method="C")
+cooccurrenceCues(cuesOutcomes, duplicates=FALSE, method="C",
+   max.cues=20000, max.characters=20000, max.lines=500000)
 }
 \arguments{
   \item{cuesOutcomes}{
@@ -26,6 +27,18 @@ cooccurrenceCues(cuesOutcomes, duplicates=FALSE, method="C")
     be calculated with C using \code{cooc} (\code{"C"}: default), with
     an AWK script (\code{"awk"}), or within R (\code{"R"}).
   }
+  \item{max.cues}{
+    An integer specifying the overall number of distinct cues (and
+    outcomes); by default set to \code{=20000}.
+  }
+  \item{max.characters}{
+    An integer specifying the maximum character length of cues per
+    each occurrence, i.e. line in \code{cuesOutcomes}, by default set to
+    \code{=20000}.
+  }
+  \item{max.lines}{An integer specifying the maximum number of
+    lines in \code{cuesOutcomes}; by default set to \code{=500000}.
+  }
 }
 
 \details{
@@ -35,16 +48,22 @@ cooccurrenceCues(cuesOutcomes, duplicates=FALSE, method="C")
   when \code{method="awk"}.  Otherwise, a slow R implementation can be
   used (\code{method="R"}), in which case the model may not scale up.
 
-  With the fastest C code version, the maximum length of individual
-  cue combinations is 20,000 characters (including underscores) and
-  the maximum number of unique Cues or unique Outcomes is 20,000. The
-  AWK script does not have these restrictions concerning its input,
-  but will only work in UNIX-like operating systems, i.e. not in
-  Windows.
+  With the fastest C code version, the default maximum length of
+  individual cue combinations is 20,000 characters (including
+  underscores), the default maximum number of unique Cues or unique
+  Outcomes is 20,000, and the default number of input lines in
+  \code{cuesOutcomes} is 500,000. These limits can be adjusted with
+  the appropriate arguments; however, that should only be done with
+  the utmost care. The AWK script does not have these restrictions
+  concerning its input, but will only work in UNIX-like operating
+  systems, i.e. not in Windows.
 
   With the C and AWK versions, several temporary text files are
   written to and erased from the current working directory (see
   \code{\link{estimateWeights}} for details).
+
+  A warning is given if the Cues contain any space characters, as
+  these may be difficult to identify visually in the resultant matrix.
 
 }
 \value{
@@ -58,7 +77,7 @@ cooccurrenceCues(cuesOutcomes, duplicates=FALSE, method="C")
   Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and
   Hendrix, P. and Marelli, M., An amorphous model for morphological
   processing in visual comprehension based on naive discriminative
-  learning.  Psychological Review, in press.
+  learning.  Psychological Review, 118, 438-482.
 }
 \author{
 R. H. Baayen and Petar Milin, with contributions from Antti Arppe and

@@ -41,7 +41,7 @@ ndlCrossvalidate(formula, data, frequency=NA, k=10, folds=NULL, \dots)
   }
   \item{\dots}{
    Control arguments to be passed along to auxiliary functions, in specific
-   \code{\link{estimateWeights}}.
+   \code{\link{estimateWeights}} and/or \code{\link{estimateActivations}}.
 }
 }
 
@@ -67,10 +67,11 @@ Crossvalidation of a Naive Discriminative Learning model.
 }
 
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
 
 Arppe, A. and Baayen, R. H. (in prep.). Statistical modeling and the
 principles of human learning.

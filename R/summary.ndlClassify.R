@@ -12,10 +12,12 @@ summary.ndlClassify <- function(object, ...)
 
 print.summary.ndlClassify <- function(x, digits=max(3,getOption("digits")-3), max.print=10, ...)
 { 
-  if(!is.null(x$digits) & is.numeric(x$digits))
-    digits=x$digits
-  if(!is.null(x$max.print) & is.numeric(x$max.print))
-    max.print=x$max.print
+  if(is.na(max.print))
+    max.print= NROW(x$weights)
+#  if(!is.null(x$digits) & is.numeric(x$digits))
+#    digits=x$digits
+#  if(!is.null(x$max.print) & is.numeric(x$max.print))
+#    max.print=x$max.print
 
   cat("\nCall:\n")
   print(x$call)

@@ -36,7 +36,7 @@ University of Belgrade, Serbia.
 
 Baayen, R. H., Milin, P., Filipovic Durdevic, D., Hendrix, P. and Marelli, M.
 (2011), An amorphous model for morphological processing in visual comprehension
-based on naive discriminative learning. Psychological Review, in press.
+based on naive discriminative learning. Psychological Review, 118, 438-482. 
 
 }
 \seealso{
@@ -48,7 +48,8 @@ serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
 serbian$Outcomes <- serbian$LemmaCase
 sw <- estimateWeights(cuesOutcomes=serbian)
 sw[1:5,1:5]
-activations <- estimateActivations(unique(serbian[,c("WordForm", "Cues")]), sw)
-activations[1:5,1:5]
+activations <- estimateActivations(unique(serbian["Cues"]), sw)$activationMatrix
+rownames(activations) <- unique(serbian[["WordForm"]])
+activations[1:5,1:6]
 }
 \keyword{datasets}

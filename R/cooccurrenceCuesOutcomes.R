@@ -1,28 +1,56 @@
 cooccurrenceCuesOutcomes <-
-function(cuesOutcomes, duplicates=FALSE, method="C") 
+function(cuesOutcomes, duplicates=FALSE, method="C", max.cues=20000, max.characters=20000, max.lines=500000) 
 {
   if(!(method %in% c("R","awk","C")))
     stop(paste("method: ",method, " unknown => select 'C', 'R' or 'awk'.",sep=""))
 
-  if(method!="R" & !("ndl_410025912.txt" %in% list.files()))
-    { standAlone=TRUE
-      write.table(cuesOutcomes[, c("Frequency", "Cues", "Outcomes")], 
-          file = "ndl_410025912.txt", quote = FALSE, row.names = FALSE)
+  if(method!="R" & is.null(getOption("ndl.estimateWeights")))
+    standAlone = TRUE
+  else
+    standAlone = FALSE
+
+  if(method=="C" & .Platform$OS.type=="unix" & standAlone)
+    { cues = unique(unlist(strsplit(as.character(cuesOutcomes$Cues), "_")))
+      outcomes = unique(unlist(strsplit(as.character(cuesOutcomes$Outcomes), "_")))
+      outcomes = outcomes[outcomes!="NIL"]
+      characters.cues = max(unlist(lapply(as.character(cuesOutcomes$Cues), nchar)))
+      n.cues = length(cues)
+      n.outcomes = length(outcomes)
+      n.rows = NROW(cuesOutcomes)
+      if(characters.cues>=max.characters)
+        stop(paste("Overall maximum character length of cues ",characters.cues, " + 1 > ",max.characters," => switch method to 'awk' (or 'R')."))
+      if(n.cues>max.cues)
+        stop(paste("Overall number of unique cues: ",n.cues," > ",max.cues," => switch method to 'awk' (or 'R')."))
+      if(n.outcomes>max.cues)
+        stop(paste("Overall number of unique outcomes: ",n.outcomes," > ",max.cues," => switch method to 'awk' (or 'R')."))
+      if(n.rows>max.lines)
+        stop(paste("Overall number of 'cuesOutcomes' lines: ",n.rows," > ",max.lines," => switch method to 'awk' (or 'R')."))
+     }
+
+  if(standAlone)
+    { write.table(cuesOutcomes[, c("Frequency", "Cues", "Outcomes")], 
+          file = "ndl_410025912.txt", sep="\t", quote = FALSE, row.names = FALSE)
       if(method=="C")
         { write(paste("duplicates=",duplicates,sep=""), file="ndl_par_410025912.txt")
+          write(format(max.lines, scientific=FALSE), file="ndl_par_410025912.txt", append=TRUE);
+          write(format(max.characters, scientific=FALSE), file="ndl_par_410025912.txt", append=TRUE);
+          write(format(max.cues, scientific=FALSE), file="ndl_par_410025912.txt", append=TRUE);
     	  .C("cooc")
         }
     }
-  else
-    standAlone=FALSE
 
-  cues = unique(unlist(strsplit(cuesOutcomes$Cues, "_")))
-  outcomes = unique(unlist(strsplit(cuesOutcomes$Outcomes,"_")))
+  cues = unique(unlist(strsplit(as.character(cuesOutcomes$Cues), "_")))
+  outcomes = unique(unlist(strsplit(as.character(cuesOutcomes$Outcomes),"_")))
   outcomes = outcomes[outcomes!="NIL"]
+  if(length(grep(" ",cues))!=0)
+    warning("One or more space characters ' ' among cues.")
+  if(length(grep(" ",outcomes))!=0)
+    warning("One or more space characters ' ' among outcomes.")
 
   if(method=="awk") {
 
-  awk = paste('BEGIN { duplicates=',as.numeric(duplicates),'
+  awk = paste('BEGIN { FS="\t"
+     duplicates=',as.numeric(duplicates),'
 
      infile = "ndl_410025912.txt"
      getline < infile
@@ -97,13 +125,13 @@ function(cuesOutcomes, duplicates=FALSE, method="C")
 
    res = scan("featuresByOutcomes_410025912.mat.txt", quiet = TRUE)
    rown = scan("featuresByOutcomes_410025912.row.txt", what = "character", 
-       quiet = TRUE, quote="")
+       sep="\n", quiet = TRUE, quote="")
    coln = scan("featuresByOutcomes_410025912.col.txt", what = "character", 
-      quiet = TRUE, quote="")
+      sep="\n", quiet = TRUE, quote="")
    m = matrix(res, length(rown), length(coln), byrow = TRUE)
    rownames(m) = rown
    colnames(m) = coln
-   m = m[cues, outcomes]
+   m = m[cues, outcomes, drop=FALSE]
    system("rm coocCuesOutcomes.awk", wait=TRUE)
 
    if(standAlone)
@@ -116,12 +144,12 @@ function(cuesOutcomes, duplicates=FALSE, method="C")
   if(method=="C")
   {
     res = scan("coocCuesOutcomes_410025912.txt", quiet = TRUE)
-    rown = scan("rows_410025912.txt", what = "character", quiet = TRUE, quote="")
-    coln = scan("columns_410025912.txt", what = "character", quiet = TRUE, quote="")
+    rown = scan("rows_410025912.txt", what = "character", sep="\n", quiet = TRUE, quote="")
+    coln = scan("columns_410025912.txt", what = "character", sep="\n", quiet = TRUE, quote="")
     m = matrix(res, length(rown), length(coln), byrow = TRUE)
     rownames(m) = rown
     colnames(m) = coln
-    m = m[cues, outcomes]
+    m = m[cues, outcomes, drop=FALSE]
 
     if(standAlone)
       system("rm ndl_410025912.txt ndl_par_410025912.txt rows_410025912.txt columns_410025912.txt coocCues_410025912.txt coocCuesOutcomes_410025912.txt", wait=TRUE)
@@ -136,8 +164,8 @@ function(cuesOutcomes, duplicates=FALSE, method="C")
     colnames(m)=outcomes
 
     for(i in 1:nrow(cuesOutcomes)) {
-      cs = unlist(strsplit(cuesOutcomes$Cues[i], "_"))
-      ot = unlist(strsplit(cuesOutcomes$Outcomes[i], "_"))
+      cs = unlist(strsplit(as.character(cuesOutcomes$Cues[i]), "_"))
+      ot = unlist(strsplit(as.character(cuesOutcomes$Outcomes[i]), "_"))
       ot = ot[ot!="NIL"]
       if(!duplicates)
         { cs = unique(cs)

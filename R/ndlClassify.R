@@ -2,7 +2,8 @@ ndlClassify <- function(formula, data, frequency=NA, ...)
 {
   call <- match.call()
 
-  response = as.character(formula[2])
+#  response = as.character(formula[2])
+  response=gsub("[ ]+"," ",paste(deparse(formula[[2]],width.cutoff=500),collapse=""))
   predictors=gsub("[ ]+"," ",paste(deparse(formula[[3]],width.cutoff=500),collapse=""))
 
   if(predictors == ".")
@@ -23,10 +24,10 @@ ndlClassify <- function(formula, data, frequency=NA, ...)
   cuesOutcomes = ndlCuesOutcomes(formula=formula, data=data, frequency=frequency, ...)
 
   weightMatrix = estimateWeights(cuesOutcomes, ...)
-  weightMatrix = weightMatrix[order(rownames(weightMatrix)),]
-  weightMatrix = weightMatrix[,order(colnames(weightMatrix))]
+  weightMatrix = weightMatrix[order(rownames(weightMatrix)),,drop=FALSE]
+  weightMatrix = weightMatrix[,order(colnames(weightMatrix)),drop=FALSE]
 
-  activationMatrix = estimateActivations(cuesOutcomes, weightMatrix, unique=FALSE) 
+  activationMatrix = estimateActivations(cuesOutcomes, weightMatrix, ...)$activationMatrix 
 
   result <- list(activationMatrix=activationMatrix,  weightMatrix=weightMatrix, cuesOutcomes=cuesOutcomes, frequency=frequency, call=call, formula=formula, data=data)
   class(result) <- "ndlClassify"
@@ -38,8 +39,10 @@ ndlClassify <- function(formula, data, frequency=NA, ...)
 print.ndlClassify <- function(x, max.print=10, ...)
 {
   digits=max(3,getOption("digits")-3)
-  if(!is.null(x$max.print) & is.numeric(x$max.print))
-    max.print=x$max.print
+  if(is.na(max.print))
+    max.print=NROW(x$weightMatrix)
+#  if(!is.null(x$max.print) & is.numeric(x$max.print))
+#       max.print=x$max.print
 
   cat("\n")
   print(x$call)

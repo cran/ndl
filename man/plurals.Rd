@@ -24,16 +24,20 @@
 %%  ~~ If necessary, more details than the __description__ above ~~
 %%}
 \source{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
+
 }
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
+
 }
 \examples{
 data(plurals)

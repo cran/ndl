@@ -27,10 +27,12 @@ orthoCoding(words = c("hello", "world"), maxn = 2)
   vector \cite{words}.
 }
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
+
 }
 \author{
 Peter Hendrix and Harald Baayen

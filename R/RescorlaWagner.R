@@ -22,6 +22,7 @@ RescorlaWagner = function(
     stringsAsFactors=FALSE
   )
 
+  theOrder = NA
   cnt = 0
   for (run in 1:nruns) {
     if (random) {
@@ -41,11 +42,12 @@ RescorlaWagner = function(
       } else {
         Lambda = 0
       }
-      for (j in 1:length(weightvec)) {  
-        if (names(weightvec)[j] %in% currentCues) {
-          weightvec[j] = weightvec[j] + alpha*beta1*(Lambda-Vtotal)
-        }
-      }
+      #for (j in 1:length(weightvec)) {  
+      #  if (names(weightvec)[j] %in% currentCues) {
+      #    weightvec[j] = weightvec[j] + alpha*beta1*(Lambda-Vtotal)
+      #  }
+      #}
+      weightvec[currentCues] = weightvec[currentCues]+alpha*beta1*(Lambda-Vtotal)
       cnt = cnt + 1 
       res[cnt] = weightvec[traceCue]
     }

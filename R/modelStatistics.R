@@ -1,7 +1,9 @@
 modelStatistics <- function(observed, predicted, frequency=NA, p.values, n.data, n.predictors, outcomes=levels(as.factor(observed)), 
-    p.normalize=TRUE, cross.tabulation=TRUE, p.zero.correction=1/(nrow(p.values)*ncol(p.values))^2)
+    p.normalize=TRUE, cross.tabulation=TRUE, p.zero.correction=1/(NROW(p.values)*NCOL(p.values))^2)
 { if(p.zero.correction==0) warning("Loglikelihood and related statistics may be inestimable, if P=0 for any observed outcome.");
   N <- length(observed);
+#  if(any(!(unique(observed) %in% colnames(p.values))))
+#    p.values <- cbind(p.values, matrix(0,NROW(p.values),1,dimnames=list(NULL,setdiff(unique(observed),colnames(p.values)))))
   if(p.normalize)
     p.values <- p.values/apply(p.values,1,sum)
   p.outcomes <- colnames(p.values);

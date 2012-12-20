@@ -38,11 +38,12 @@ ndlClassify(formula, data, frequency=NA, \dots)
   \item{max.print}{
     The maximum number of rows of the \code{weightMatrix} to be output
     when printing with \code{print.ndlClassify}; by default equal to
-    10.
+    10; if set to \code{NA} all rows will be output.
   }
   \item{\dots}{ 
-    Control arguments to be passed along to \code{ndlCuesOutcomes},
-    \code{estimateWeights}, and/or \code{print.ndlClassify}.
+    Control arguments to be passed along to
+    \code{\link{ndlCuesOutcomes}}, \code{\link{estimateWeights}},
+    \code{\link{estimateActivations}}, and/or \code{\link{print.ndlClassify}}.
   }
 }
 \details{
@@ -70,10 +71,11 @@ Classification by naive discriminative learning.
 }
 }
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
 
 Danks, D. (2003). Equilibria of the Rescorla-Wagner model. Journal of
 Mathematical Psychology, 47 (2), 109-121.
@@ -84,13 +86,15 @@ nonreinforcement. In Black, A. H., & Prokasy, W. F. (Eds.),
 Classical conditioning II: Current research and theory (pp. 64-99).
 New York: Appleton-Century-Crofts.
 
-Arppe, A. and Baayen, R. H. (in prep.)
+Arppe, A. and Baayen, R. H. (in prep.) Statistical classification and
+principles of human learning.
+
 }
 \author{
 R. H. Baayen and Antti Arppe
 }
 \seealso{
-\code{\link{summary.ndlClassify}, \link{plot.ndlClassify}, \link{anova.ndlClassify}, \link{ndlCuesOutcomes}, \link{estimateWeights}, \link{cueCoding}}
+\code{\link{summary.ndlClassify}, \link{plot.ndlClassify}, \link{anova.ndlClassify}, \link{predict.ndlClassify}, \link{ndlCuesOutcomes}, \link{estimateWeights}, \link{cueCoding}}
 }
 \examples{
 data(think)

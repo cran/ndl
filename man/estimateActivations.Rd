@@ -9,8 +9,7 @@
   (weights) for the Rescorla-Wagner model.
 }
 \usage{
-estimateActivations(cuesOutcomes, weightMatrix, unique=FALSE, 
-  reportNew=TRUE)
+estimateActivations(cuesOutcomes, weightMatrix, unique=FALSE, \dots)
 }
 \arguments{
   \item{cuesOutcomes}{
@@ -29,10 +28,9 @@ estimateActivations(cuesOutcomes, weightMatrix, unique=FALSE,
   \item{unique}{
     A logical that, if \code{=TRUE}, removes duplicate rows from the activation matrix.
   }
-  \item{reportNew}{
-    A logical, if \code{=TRUE} (default), cues in the cuesOutcomes
-    input that are not available in the weightMatrix are reported on
-    standard out.
+  \item{\dots}{
+    Control arguments to be passed along from
+    \code{\link{ndlClassify}} and/or \code{\link{ndlCrossvalidate}}.
   }
 }
 \details{
@@ -41,13 +39,12 @@ The activation of an outcome is defined as the sum of the weights on
 the incoming links from active cues.  When the input (the \code{Cues}
 in \code{cuesOutcomes}) contain elements that are not present in the
 rownames of the \code{weightMatrix}, such new cues are added to the
-\code{weightMatrix} with zero entries.  When \code{reportNew} is
-\code{=TRUE} (the default), the new cue values are reported on
-standard output.  The set of exemplars in \code{cuesOutcomes} may
-contain rows with identical cue sets but different outcome
-sets. Consequently, for such rows, identical vectors of activations of
-outcomes are generated.  In the activation matrix returned by
-\code{estimateActivations}, such duplicate entries are removed.
+\code{weightMatrix} with zero entries. The set of exemplars in
+\code{cuesOutcomes} may contain rows with identical cue sets but
+different outcome sets. Consequently, for such rows, identical vectors
+of activations of outcomes are generated.  In the activation matrix
+returned by \code{estimateActivations}, such duplicate entries are
+removed.
 
 For examples of how the \code{cuesOutcomes} data frame should be
 structured, see the data sets \code{\link{danks}},
@@ -57,19 +54,29 @@ output of \code{\link{estimateWeights}}.
 
 }
 \value{
-  A matrix with as dimensions, for rows, the number of exemplars
+A list with the following components:
+\describe{
+  \item{\code{activationMatrix}}{A matrix with as dimensions, for rows, the number of exemplars
   (by-row cue sets, typically word forms), and for columns, the number
   of unique outcomes (meanings), specifying the activation of a
-  meaning given the cues in the input for a given exemplar.
+  meaning given the cues in the input for a given exemplar.}
+  \item{\code{newCues}}{A vector of cues encountered in \code{cuesOutcomes} which were not
+  present in \code{weightMatrix}.}
+  \item{\dots}{
+    Control arguments to be passed along from \code{\link{ndlClassify}},
+    and/or \code{\link{ndlCrossvalidate}}.}
+}
 }
 \references{
-Baayen, R. H. and Milin, P.  and  Filipovic Durdevic, D. and Hendrix, P. and
-Marelli, M., An amorphous model for morphological processing in visual
-comprehension based on naive discriminative learning.  Psychological Review, in
-press.
+
+Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
+P. and Marelli, M., An amorphous model for morphological processing in
+visual comprehension based on naive discriminative learning.
+Psychological Review, 118, 438-482.
+
 }
 \author{
-R. H. Baayen
+R. H. Baayen & Antti Arppe
 }
 %%\note{
 %%  ~~further notes~~
@@ -83,7 +90,8 @@ R. H. Baayen
   serbian$Outcomes <- serbian$LemmaCase
   sw <- estimateWeights(cuesOutcomes=serbian)
   sw[1:5,1:6]
-  activations <- estimateActivations(unique(serbian[,c("WordForm", "Cues")]), sw)
+  activations <- estimateActivations(unique(serbian["Cues"]), sw)$activationMatrix
+  rownames(activations) <- unique(serbian[["WordForm"]])
   activations[1:5,1:6]
 
   syntax <- c("acc", "dat", "gen", "ins", "loc", "nom", "Pl", "Sg") 

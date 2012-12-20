@@ -40,7 +40,7 @@ for random forests in the \code{party} package) is not implemented.
 \references{
   R. Harald Baayen (2011).  Corpus linguistics and naive 
   discriminative learning.  Brazilian journal of applied 
-  linguistics, in press.
+  linguistics, 11, 295-328.
 
   Carolin Strobl, Anne-Laure Boulesteix, Thomas Kneib, Thomas
   Augustin and Achim Zeileis (2008).  Conditional Variable

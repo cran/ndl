@@ -1,5 +1,5 @@
 ndlStatistics = function(ndl, ...)
-{
+{ 
   pdata=acts2probs(ndl$activationMatrix)
   pmatrix=pdata$p
   predictions=pdata$predicted
@@ -20,7 +20,7 @@ ndlStatistics = function(ndl, ...)
       outcomes = levels(as.factor(ndl$cuesOutcomes$Outcomes)),
       p.normalize = TRUE, 
       cross.tabulation = TRUE,
-      p.zero.correction = 1/n.data^2   # this can be specified according to the structure of the data
+      p.zero.correction = 1e-10   # this can be specified according to the structure of the data
       )
 
   statistics <- c(list(n.data = n.data, df.null = df.null, df.model = df.model), statistics)

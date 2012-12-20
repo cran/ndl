@@ -29,7 +29,8 @@
     }
 \item{max.print}{
     The maximum number of rows of \code{weights} to be output when
-    printing; by default equal to 10.
+    printing; by default equal to 10; ; if set to \code{NA} all rows
+    will be output.
     }
 \item{\dots}{
     Control arguments passed to or from other methods,

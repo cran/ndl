@@ -24,10 +24,12 @@ This example lexicon is used in Baayen et al. (2011) (table 8, figure 4)
 to illustrate the Rescorla-Wagner equations.
 }
 \references{
-  Baayen, R. H., Milin, P., Filipovic Durdevic, D., Hendrix, P. and Marelli, M.
-  (2011), An amorphous model for morphological processing in visual
-  comprehension based on naive discriminative learning. Psychological Review,
-  in press.
+
+  Baayen, R. H., Milin, P., Filipovic Durdevic, D., Hendrix, P. and
+  Marelli, M.  (2011), An amorphous model for morphological processing
+  in visual comprehension based on naive discriminative
+  learning. Psychological Review, 118, 438-482.
+
 }
 \seealso{
   \code{\link{RescorlaWagner}, \link{orthoCoding}}

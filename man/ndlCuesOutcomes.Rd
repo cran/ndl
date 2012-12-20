@@ -35,7 +35,7 @@ ndlCuesOutcomes(formula, data, frequency=NA,
     numeric predictor will be treated as a discrete class of its own.
   }
   \item{g.numeric}{
-    A parameter to be passed to the numeric2discrete function
+    A parameter to be passed to the \code{numeric2discrete} function
     (parameter \code{g} for \code{Hmisc::cut2(..., g=g.numeric, ...)},
     or a user-defined function), determining the desired number of
     discrete categories for each numeric predictor; by default equal

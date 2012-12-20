@@ -45,10 +45,12 @@ corpus and the Treebank Wall Street Journal collection.
   }
 }
 \references{
-Bresnan, J., Cueni, A., Nikitina, T. and Baayen, R. H. (2007) Predicting the
-dative alternation, in Bouma, G. and Kraemer, I. and Zwarts, J.  (eds.),
-\emph{Cognitive Foundations of Interpretation}, Royal Netherlands Academy
-of Sciences, 33 pages, in press.
+
+Bresnan, J., Cueni, A., Nikitina, T. and Baayen, R. H. (2007)
+Predicting the dative alternation, in Bouma, G. and Kraemer, I. and
+Zwarts, J.  (eds.), \emph{Cognitive Foundations of Interpretation},
+Royal Netherlands Academy of Sciences, 69-94.
+
 }
 \examples{
 \dontrun{

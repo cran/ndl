@@ -1,4 +1,4 @@
-estimateActivations <- function(cuesOutcomes, weightMatrix, unique=FALSE, ...) {
+estimateActivations <- function(cuesOutcomes, weightMatrix, unique=FALSE,...) {
 
   cues = rownames(weightMatrix)
   outcomes = colnames(weightMatrix)
@@ -75,7 +75,7 @@ estimateActivations <- function(cuesOutcomes, weightMatrix, unique=FALSE, ...) {
   names(v) = cues
 
   for(i in 1:nrow(cuesOutcomes)) {
-    v[obsCues[[i]]]=1
+      v[obsCues[[i]]]=1
     m[,i] = v
     v[obsCues[[i]]]=0
   }

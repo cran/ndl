@@ -4,8 +4,7 @@
   Implementation of the Rescorla-Wagner equations.
 }
 \description{
-  \code{RescorlaWagner} implements the Rescorla-Wagner equations. Given a data frame
-  specifying cues, outcomes, and frequencies, it calculates, for a given cue-outcome pair,
+  \code{RescorlaWagner} implements an iterative simulation based on the Rescorla-Wagner equations. Given a data frame specifying cues, outcomes, and frequencies, it calculates, for a given cue-outcome pair,
   the temporal sequence of developing weights.
 }
 \usage{
@@ -84,7 +83,7 @@ R. H. Baayen and Antti Arppe
 }
 \examples{
 data(lexample)
-lexample$Cues <- orthoCoding(lexample$Word, maxn=1)
+lexample$Cues <- orthoCoding(lexample$Word, grams=1)
 lexample.rw <- RescorlaWagner(lexample, nruns=25, 
    traceCue="h", traceOutcome="hand")
 plot(lexample.rw)

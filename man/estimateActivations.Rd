@@ -86,7 +86,7 @@ R. H. Baayen & Antti Arppe
 }
 \examples{
   data(serbian)
-  serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
+  serbian$Cues <- orthoCoding(serbian$WordForm, grams=2)
   serbian$Outcomes <- serbian$LemmaCase
   sw <- estimateWeights(cuesOutcomes=serbian)
   sw[1:5,1:6]

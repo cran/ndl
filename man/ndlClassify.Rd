@@ -14,7 +14,7 @@
   incoming links.
 }
 \usage{
-ndlClassify(formula, data, frequency=NA, \dots)
+ndlClassify(formula, data, frequency=NA, variable.value.separator="", \dots)
 
 \method{print}{ndlClassify}(x, max.print=10, \dots)
 }
@@ -39,6 +39,11 @@ ndlClassify(formula, data, frequency=NA, \dots)
     The maximum number of rows of the \code{weightMatrix} to be output
     when printing with \code{print.ndlClassify}; by default equal to
     10; if set to \code{NA} all rows will be output.
+  }
+  \item{variable.value.separator}{ 
+    A character string which will separate variable names from
+    variable values in their combination as cue values; by default an
+    empty character string (\code{=""}). 
   }
   \item{\dots}{ 
     Control arguments to be passed along to

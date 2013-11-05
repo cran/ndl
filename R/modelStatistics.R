@@ -31,7 +31,7 @@ modelStatistics <- function(observed, predicted, frequency=NA, p.values, n.data,
 
   # calculate index of concordance C if response variable is binary
   if (length(outcomes) == 2)
-     { require(Hmisc, quietly=TRUE)
+     { invisible(require(Hmisc, quietly=TRUE))
        if(all(is.na(frequency)))
          { predval = sort(unique(predicted))[1]
            binvec = as.numeric(as.character(observed)==predval)

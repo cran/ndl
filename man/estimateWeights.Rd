@@ -10,13 +10,14 @@
   equilibrium equations for the Rescorla-Wagner model of Danks (2003).
 }
 \usage{
-estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
-   method="C", max.cues=20000, max.characters=20000, max.lines=500000, \dots)
+estimateWeights(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALSE,
+verbose=FALSE, trueCondProb=TRUE, addBackground=FALSE, hasUnicode=FALSE, \dots)
 }
 \arguments{
   \item{cuesOutcomes}{
     A data frame with three variables specifying frequency, cues, and
-    outcomes, that may be created with \code{\link{ndlCuesOutcomes}}:
+    outcomes, that may be created with \code{\link{ndlCuesOutcomes}} or
+with the accessory script in the inst/scripts directory:
     \describe{
     \item{\code{Cues}}{A character vector specifying the cues. 
            When there is more than one cue, the cues should be 
@@ -28,56 +29,54 @@ estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
            with which a combination of cues and outcomes occurs.}
     }
   }
-  \item{duplicates}{
+  \item{removeDuplicates}{
     A logical specifying whether multiple occurrences of a Cue in
     conjunction with an individual instance of an Outcome shall each
-    be counted as a distinct occurrence of that Cue (\code{TRUE}), or
-    only as a single occurrence (\code{FALSE}: default).
+    be counted as a distinct occurrence of that Cue (\code{FALSE}: default), or
+    only as a single occurrence (\code{TRUE}).
  }
   \item{saveCounts}{
     A logical specifying whether the co-occurrence matrices should be
     saved.  If set equal to \code{TRUE}, the files \code{coocCues.rda} and
     \code{coocCuesOutcomes.rda} will be saved in the current
-    workspace.
+    working directory.
   }
-  \item{method}{
-    A character string indicating whether cooccurrence matrices should
-    be calculated with C using \code{cooc} (\code{"C"}: default), with two AWK
-    scripts (\code{"awk"}), or within R (\code{"R"}).
+  \item{verbose}{
+    If set to \code{TRUE}, display diagnostic messages.
   }
-  \item{max.cues}{
-    An integer specifying the overall number of distinct cues (and
-    outcomes); by default set to \code{=20000}.
+  \item{addBackground}{
+    If you would like to add a background rate for all your cues and
+    outcomes, but did not include an general environment cue to all your
+    events, one will be added for you to the matrices, as
+    specified in Danks (2003). If changed from the default (FALSE) to
+    TRUE, background cues will be added. The name used for the background rates is "Environ", and
+    will be included in the output weight matrix.
+    
   }
-  \item{max.characters}{
-    An integer specifying the maximum character length of cues per
-    each occurrence, i.e. line in \code{cuesOutcomes}, by default set to
-    \code{=20000}.
+  \item{trueCondProb}{
+    The conditional probability calculations used will be those
+    specified in Danks (2003). If changed from the default (TRUE) to
+    FALSE, the normalization specified in Baayen, et al (2011) is used.
   }
-  \item{max.lines}{An integer specifying the maximum number of
-    lines in \code{cuesOutcomes}; by default set to \code{=500000}.
+
+  \item{hasUnicode}{
+    A logical specifying whether to apply a UTF-8 to integer conversion
+    to the names of the cues. This was implemented to solve issues with
+    differences Unicode cue names. 
   }
+
+  
   \item{\dots}{Control arguments to be passed along from \code{\link{ndlClassify}}
     and/or \code{\link{ndlCrossvalidate}}.
   }
 }
 \details{
 
-  The real work is done by C code (\code{cooc}), when
-  \code{method="C"} (default), or two AWK scripts, when
-  \code{method="awk"}.  Otherwise, a slow R implementation can be used
-  (\code{method="R"}), in which case the model may not scale up.
-
-  With the fastest C code version, the default maximum length of
-  individual cue combinations is 20,000 characters (including
-  underscores), the default maximum number of unique Cues or unique
-  Outcomes is 20,000, and the default number of input lines in
-  \code{cuesOutcomes} is 500,000. These limits can be adjusted with
-  the appropriate arguments; however, that should only be done with
-  the utmost care.  The AWK scripts do not have these restrictions
-  concerning their input, but will only work in UNIX-like operating
-  systems, i.e. not in Windows.
-
+  Using Rcpp, a C++ based implementation processes all of the data in
+  RAM. The module will check the amount of RAM you have available in
+  your system and warn you if the amount of RAM is insufficient
+  to build your model.
+  
   For examples of how the \code{cuesOutcomes} data frame should be
   structured, see the data sets \code{\link{danks}},
   \code{\link{plurals}}, and \code{\link{serbian}}. N.B. Empty
@@ -89,59 +88,47 @@ estimateWeights(cuesOutcomes, duplicates=FALSE, saveCounts=FALSE,
 }
 \value{
   A matrix with cue-to-outcome association strengths. Rows are cues,
-  and columns are outcomes.  Rows and columns are labeled.
+  and columns are outcomes.  Rows and columns are labeled. If
+  addBackground=T, a row named "Environ" will be added to the output.
 }
 \references{
 
 Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and Hendrix,
-P. and Marelli, M., An amorphous model for morphological processing in
+P. and Marelli, M. (2011), An amorphous model for morphological processing in
 visual comprehension based on naive discriminative learning.
 Psychological Review, 118, 438-482.
 
 }
 \author{
-R. H. Baayen and Petar Milin, with contributions from Antti Arppe and
+Cyrus Shaoul, R. H. Baayen and Petar Milin, with contributions from Antti Arppe and
 Peter Hendrix.
 }
 \note{
-  With the current C and AWK versions, several temporary text files
-  are written to and erased from the current working directory in
-  order to undertake the cooccurrence calculations.
-
-  For the C version, these temporary files are named:
-  \code{ndl_410025912.txt}, \code{ndl_par_410025912.txt},
-  \code{rows_410025912.txt}, \code{columns_410025912.txt},
-  \code{coocCues_410025912.txt}, and \code{coocCuesOutcomes_410025912.txt}.
-
-  For the AWK version, these temporary files are named:
-  \code{ndl_410025912.txt},
-  \code{featuresByOutcomes_410025912.mat.txt},
-  \code{featuresByOutcomes_410025912.row.txt},
-  \code{featuresByOutcomes_410025912.col.txt},
-  \code{cooc_410025912.mat.txt}, and \code{cooc_410025912.row.txt}.
+Add a note here.
 
 }
 \section{Acknowledgements}{
   The assistance of Uwe Ligges in getting the C function \code{cooc}
-  to work within the R framework is greatly appreciated.
+  to work within the R framework is greatly appreciated. This C function
+  was removed in version 0.2.0 and replaced with the C++ function by
+  Cyrus Shaoul.
 }
 \seealso{
   \code{\link{estimateActivations}, \link{ndlCuesOutcomes},
-  \link{cooccurrenceCues}, \link{cooccurrenceCuesOutcomes},
-  \link{danks}, \link{plurals}, \link{serbian}}
+   \link{danks}, \link{plurals}, \link{serbian}}
 }
 \examples{
   data(danks)
   estimateWeights(cuesOutcomes=danks)
 
   data(plurals)
-  plurals$Cues <- orthoCoding(plurals$WordForm, maxn=1)
-  estimateWeights(cuesOutcomes=plurals)
+  plurals$Cues <- orthoCoding(plurals$WordForm, grams=1)
+  round(estimateWeights(cuesOutcomes=plurals),2)
   
   data(serbian)
-  serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
+  serbian$Cues <- orthoCoding(serbian$WordForm, grams=2)
   serbian$Outcomes <- serbian$LemmaCase
   sw <- estimateWeights(cuesOutcomes=serbian)
-  sw[1:5,1:6]
+  round(sw[1:5,1:6],2)
 }
 \keyword{ classif }

@@ -41,7 +41,7 @@ Psychological Review, 118, 438-482.
 }
 \examples{
 data(plurals)
-plurals$Cues <- orthoCoding(plurals$WordForm, maxn=1)
+plurals$Cues <- orthoCoding(plurals$WordForm, grams=1)
 estimateWeights(cuesOutcomes=plurals)
 }
 \keyword{datasets}

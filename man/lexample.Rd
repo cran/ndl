@@ -36,7 +36,7 @@ to illustrate the Rescorla-Wagner equations.
 }
 \examples{
 data(lexample)
-lexample$Cues <- orthoCoding(lexample$Word, maxn=1)
+lexample$Cues <- orthoCoding(lexample$Word, grams=1)
 par(mfrow=c(2,2))
 lexample.rw <- RescorlaWagner(lexample, nruns=25, traceCue="h",traceOutcome="hand")
 plot(lexample.rw)

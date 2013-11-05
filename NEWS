@@ -1,5 +1,83 @@
 Changes for R-package ndl
 
+################################################### 
+Changes in version 0.2.12 (Nov 3rd, 2013) (since version 0.2.11)
+
+* Fixed problem with print.ndlClassify.
+
+################################################### 
+Changes in version 0.2.11 (Sept 23rd, 2013) (since version 0.2.10)
+
+* Fixed a bug in c++ module that added extra column to output matrix.
+
+################################################### 
+Changes in version 0.2.10 (Sept 23rd, 2013) (since version 0.2.9)
+
+* Added a better Serbian Unicode data set that uses Cyrillic instead of Latin letters, and has 
+the proper Unicode encoding set.
+
+
+
+################################################### 
+Changes in version 0.2.9 (July 27th, 2013) (since version 0.2.6, skipping alpha
+unreleased versions) 
+Implementer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+
+* Fixed bugs and improved performance.
+
+* Prepared software for CRAN release.
+
+* Due to certain software dependencies, this release of ndl might not
+compile on Mac OS X 10.6 and earlier. If this is the case, please
+continue to use ndl version 0.1.6. The results produced are
+numerically almost identical, with slower performance being the main
+difference.
+
+* new option for estimateWeights : hasUnicode. This must be used when rownames
+contain Unicode!
+
+* other new options: addBackground and trueProbabilities (see the docs for 
+explanation of what they do.) They are turned off by default to maintain continuity with 
+ndl 0.1.6
+
+
+###################################################
+Changes in version 0.2.6 (Apr 30th, 2013) (since version 0.2.1)
+Implementer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+
+* Fixed some bugs in estimateWeights.R relating to "addBackground".
+
+* Changed the way that duplicate cues were counted when "RemoveDuplicates" was 
+set to FALSE.
+
+* Added a helper python script in inst/scripts called "ndl.preproc.py". This script
+can be used to convert a text corpus into a list of learning events. See the script for
+help on using it.
+
+* Duplicate outcomes in events are now removed by default.
+
+###################################################
+Changes in version 0.2.1 (Jan 29th, 2013) (since version 0.2.0)
+Implementer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+
+* added the ability to use the new Compact Event format in the function 
+estimateWeightsCompact
+
+* added a new low-rank approximation of the SVD for the pseudoinverse in the case
+that there are more than 20000 cues.
+
+
+###################################################
+Changes in version 0.2.0 (Dec 20th, 2012) (since version 0.1.6)
+Implementer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+
+* Removed the program cooc.c and re-implemented the event processing code
+in a Rcpp module.
+
+* Parallelized where possible using OpenMP
+
+###################################################
+
 Changes in version 0.1.6 (Nov 27th, 2012) (since version 0.1.1)
 Implementer: Antti Arppe <antti.arppe@iki.fi>
 
@@ -69,14 +147,13 @@ Implementer: Antti Arppe <antti.arppe@iki.fi>
   changed so that previously unseen Cues and Outcomes in input
   'cuesOutcomes' are included in the output values, in addition to
   'activationMatrix', as 'newCues' and 'newOutcomes', instead of these
-  being printed to standard output; in the case of such unseen Cues or
-  Outcomes a warning message is now output; code modified so that a
-  warning message is output if potential accidental 'NA' strings
-  (resulting from 'as.character(NA)') are detected among the input
-  Cues and Outcomes in 'cuesOutcomes'; code will stop with an error
-  message if any actual NA's are encountered among Cues and Outcomes
-  in 'cuesOutcomes'; code modified so that a previous undocumented
-  internal reference to 'WordForm' in input 'cuesOutcomes' is removed.
+  being printed to standard output; in the case of such unseen
+  Cues or Outcomes a warning message is now output; code modified so
+  that a warning message is output if potential accidental 'NA'
+  strings (resulting from 'as.character(NA)') are detected among the
+  input Cues and Outcomes in 'cuesOutcomes'; code will stop with an
+  error message if any actual NA's are encountered among Cues and
+  Outcomes in 'cuesOutcomes'.
 
 * estimateWeights.R (estimateWeights): new arguments 'max.cues',
   'max.characters' and 'max.lines' added and code modified so that the

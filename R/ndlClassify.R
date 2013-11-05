@@ -1,4 +1,4 @@
-ndlClassify <- function(formula, data, frequency=NA, ...)
+ndlClassify <- function(formula, data, frequency=NA, variable.value.separator="", ...)
 {
   call <- match.call()
 
@@ -21,7 +21,7 @@ ndlClassify <- function(formula, data, frequency=NA, ...)
   else
     data <- data[c(response, predictors)]
 
-  cuesOutcomes = ndlCuesOutcomes(formula=formula, data=data, frequency=frequency, ...)
+  cuesOutcomes = ndlCuesOutcomes(formula=formula, data=data, frequency=frequency, variable.value.separator=variable.value.separator, ...)
 
   weightMatrix = estimateWeights(cuesOutcomes, ...)
   weightMatrix = weightMatrix[order(rownames(weightMatrix)),,drop=FALSE]
@@ -43,11 +43,10 @@ print.ndlClassify <- function(x, max.print=10, ...)
     max.print=NROW(x$weightMatrix)
 #  if(!is.null(x$max.print) & is.numeric(x$max.print))
 #       max.print=x$max.print
-
   cat("\n")
   print(x$call)
-  cat("\n")
-  print.formula(x$formula)
+#  cat("\n")
+#  print.formula(x$formula)
   cat("\n")
   print.table(x$weightMatrix[1:min(nrow(x$weightMatrix),max.print),], digits=digits)
   if(nrow(x$weightMatrix)>max.print)

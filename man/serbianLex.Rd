@@ -42,12 +42,15 @@ learning. Psychological Review, 118, 438-482.
 \examples{
 # calculate the weight matrix for the full set of Serbian nouns
 data(serbian)
-serbian$Cues <- orthoCoding(serbian$WordForm, maxn=2)
+serbian$Cues <- orthoCoding(serbian$WordForm, grams=2)
 serbian$Outcomes <- serbian$LemmaCase
 sw <- estimateWeights(cuesOutcomes=serbian)
 
 # calculate the meaning activations for all unique word forms
-activations <- estimateActivations(unique(serbian["Cues"]),sw)$activationMatrix
+
+desiredItems <- unique(serbian["Cues"])
+desiredItems$Outcomes <- ""
+activations <- estimateActivations(desiredItems, sw)$activationMatrix
 rownames(activations) <- unique(serbian[["WordForm"]])
 activations <- activations + abs(min(activations))
 activations[1:5,1:6]

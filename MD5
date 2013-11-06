@@ -1,4 +1,4 @@
-2a9fac6eb9111d870420d9652c193ddf *DESCRIPTION
+8952acd4e3dc70b62289d80f6ea6bef8 *DESCRIPTION
 80747407985b042e682217bc2214fcdf *NAMESPACE
 b01e191048b0471328e3c89383a2a53d *NEWS
 50538628e3ef772dc653265949e63c4f *R/RcppExports.R
@@ -51,7 +51,7 @@ d20835237fb29c3b3dfd417e6707dad8 *man/danks.Rd
 c70e7ca0bf9df4d24e354a0362242826 *man/learnLegacy.Rd
 5972dc57a0386a21e8ba843dced2d275 *man/lexample.Rd
 a48cc86e3e8f3486e0028195d5868911 *man/modelStatistics.Rd
-09aea88efe870be0174a53f7e31dac46 *man/ndl.package.Rd
+3dbf9410f76707d74d58391985282493 *man/ndl.package.Rd
 a73531bde01bca632fdda04235345117 *man/ndlClassify.Rd
 ecc324d7188449568e570a3407ebb77e *man/ndlCrossvalidate.Rd
 3f06214b0fc1d5c919ea2d931f73a2dd *man/ndlCuesOutcomes.Rd
@@ -74,4 +74,4 @@ fefb8ce4cb7471ce0fcbf0bb56ee2bc3 *man/summary.ndlCrossvalidate.Rd
 a3b084d88ba9242baf03682c61f7e5f7 *src/Makevars
 46d5d81fa215e5395c39973d811f9dce *src/Makevars.win
 345be05135425358b10c3467a27bfee7 *src/RcppExports.cpp
-6a56209faf200563e0d1f3999ab3f52c *src/learn.module.cpp
+ca24ded9c84611bdb37bc75fecb849cd *src/learn.module.cpp

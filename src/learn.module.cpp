@@ -1,4 +1,36 @@
-#include <omp.h>
+/* 
+Copyright (C) 2012,2013  Cyrus Shaoul 
+
+This file is part of the ndl package.
+
+    ndl is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    The ndl package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with HiDEx in the COPYING.txt file.
+    If not, see <http://www.gnu.org/licenses/>.
+
+
+*/
+
+//****************************************************************************
+//
+// learn.module.cpp
+//
+// This file contains c++ functions that are exported to the ndl R package.
+//
+// Currently under development by Cyrus Shaoul. 
+// cyrus.shaoul@uni-tuebingen.de
+// 
+//****************************************************************************
+
 #include <cstdio>
 #include <string>
 #include <iostream>
@@ -17,6 +49,7 @@
 #include <Rcpp.h>
 
 //Removed due to issues with MacOsX and Windoze
+
 //#include <sys/sysinfo.h>
 
 // Namespaces to search
@@ -64,6 +97,7 @@ bool operator==(const Event& lhs, const Event& rhs)
 // Repeat until you have read all the events (NumEvents of them).
 // CueID and OutcomeID files should be stored separately.
 //
+
 Events readEvents(const string ifilename) {
   Events myEvents;
   myEvents.clear();
@@ -533,58 +567,3 @@ List learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
 
 
 
-// Read in the tsv files
-// static StringVector readFile(string filename) {
-//   ifstream inFile(filename.c_str()); 
-//   size_t mycount = count(istreambuf_iterator<char>(inFile), 
-// 			 istreambuf_iterator<char>(), '\n');
-//   inFile.close();
-//   string line;
-//   vector<string> elems;
-//   StringVector output(mycount);
-//   unsigned int wordID;
-//   char wordC[100];
-//   int result;
-//   ifstream ifs(filename.c_str());
-//   while( getline(ifs, line) ) {
-//     result = sscanf(line.c_str(), "%[^\t]\t%u", wordC, &wordID);
-//     wordID = static_cast<size_t>(wordID);
-//     if (result == 2) {
-//       string word = string(wordC);
-//       if (word != "") {
-// 	output[wordID] = word;
-//       }
-//       //      cout << "Got " << output[wordID] << " with ID " << wordID << endl; 
-//     } else {
-//       Rcerr << "Bad formating in file: " << filename << " . Cannot continue. Here is the problematic line: "<< endl;
-//       Rcerr << line << endl;
-//       throw 20;
-//     }
-//   } 
-//   ifs.close();
-//   return(output);
-// }
-
-
-// // deprecated.
-// static StringVector OldreadFile(string filename) {
-//   // count number of items.
-//   ifstream inFile(filename.c_str()); 
-//   size_t mycount = count(istreambuf_iterator<char>(inFile), 
-// 			 istreambuf_iterator<char>(), '\n');
-//   inFile.close();
-//   StringVector output(mycount);
-//   string word;
-//   size_t wordID;
-//   ifstream ifs(filename.c_str());
-//   do {
-//     // get UTF8 encoded string
-//     ifs >> word;
-//     // get item id
-//     ifs >> wordID;
-//     // place the item in the correct place in the vector
-//     output[wordID] = word;
-//     cout << "Got " << word << " with ID " << wordID << endl; 
-//   } while(ifs);
-//   return(output);
-// }

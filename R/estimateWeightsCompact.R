@@ -2,36 +2,44 @@
 #### See R documentation for details.
 
 estimateWeightsCompact <- 
-  function(datasource, removeDuplicates=TRUE, saveCounts=FALSE, verbose=FALSE, MaxEvents=100000000000000, trueCondProb=TRUE, addBackground=FALSE, ...) {
-#    Sys.setlocale("LC_COLLATE", "C")
-    loaded=FALSE
+  function(datasource, removeDuplicates=TRUE, saveCounts=FALSE, verbose=FALSE, MaxEvents=100000000000000, trueCondProb=TRUE, addBackground=FALSE, ...)
+{
+    
+    ## Check for pre-existing counts.
     coocFile = paste(datasource,".coocCues.rds",sep='')
     coocOutFile = paste(datasource,".coocCuesOutcomes.rds",sep='')
     if ((file.exists(coocFile) & file.exists(coocOutFile)) & MaxEvents >= 100000000000000 ) {
-      if (removeDuplicates) {
         warning("Did not remove duplicates because there were pre-computed cooccurrence matrices availbe. Remove these files and run again.")
-      }
-      if (verbose) message("PLEASE NOTE: Found pre-computed data. Loading pre-computed coocurrence matrices. Ignoring datasource provided.")
-      flush.console()
-      coocCues= readRDS(coocFile)
-      coocCuesOutcomes= readRDS(coocOutFile)
-      loaded = TRUE
+        message(paste(c("\nNOTE: Loading pre-computed coocurrence matrices.\nIgnoring DataFrame '", basename, "' Provided.\nPlease remove the files ",coocFile," and ",coocOutFile, " if this behavior is not desired.")),sep="")
+        flush.console()
+        coocCues= readRDS(coocFile)
+        coocCuesOutcomes= readRDS(coocOutFile)
     } else {
-      if (verbose) message("Reading compact binary data from disk.")
-      flush.console()
-      ## call external C++ function using RCpp
-      CuAndCo = learn(data=datasource,RemoveDuplicates=removeDuplicates, verbose=verbose, MaxEvents=MaxEvents, addBackground=addBackground) 
-      coocCues = CuAndCo[[1]]
-      coocCuesOutcomes = CuAndCo[[2]]
-      coocOutcomesFreq = CuAndCo[[3]]
-      rm(CuAndCo)
+        if (verbose) message("Reading compact binary data from disk.")
+        flush.console()
+        ## call external C++ function using RCpp
+        CuAndCo = learn(data=datasource,RemoveDuplicates=removeDuplicates, verbose=verbose, MaxEvents=MaxEvents, addBackground=addBackground) 
+        coocCues = CuAndCo[[1]]
+        coocCuesOutcomes = CuAndCo[[2]]
+        coocOutcomesFreq = CuAndCo[[3]]
+        rm(CuAndCo)
+        gc()
+        ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
+        if (saveCounts) {
+            if (verbose) message("Completed Event Counts. Saving so-occurrence data for future calculations.")
+            flush.console()
+            saveRDS(coocCues, file=coocFile)
+            if (verbose) message(paste("Saved",coocFile))
+            flush.console()
+            saveRDS(coocCuesOutcomes, file=coocOutFile)
+            if (verbose) message(paste("Saved",coocOutFile))
+            flush.console()
+        }
     }
     if (verbose) message("Starting to process matrices.")
     ## Check sanity of arguments
     if ((addBackground) & (!trueCondProb)) {
-        if (verbose) {
-            message("*WARNING: Can't add background rates without true conditional probabilities. \n*ACTION: Proceeding without background rates.")
-        }
+        message("*WARNING: Can't add background rates without true conditional probabilities. \n*ACTION: Proceeding without background rates.")
         addBackground = FALSE
     }
     if (addBackground & trueCondProb) {
@@ -59,20 +67,7 @@ estimateWeightsCompact <-
       condProbsCues = coocCues/rowsums
       probsOutcomesGivenCues = coocCuesOutcomes/rowsums
     }
-    ### Sort the matrices in alphabetical order.
-    coocCues = coocCues[order(rownames(coocCues)),order(colnames(coocCues))]
-    coocCuesOutcomes = coocCuesOutcomes[order(rownames(coocCuesOutcomes)),order(colnames(coocCuesOutcomes))]
-    if (saveCounts & !loaded) {
-      if (verbose) message("Completed Event Counts. Saving so-occurrence data for future calculations.")
-      flush.console()
-      saveRDS(coocCues, file=coocFile)
-      if (verbose) message(paste("Saved",coocFile))
-      flush.console()
-      saveRDS(coocCuesOutcomes, file=coocOutFile)
-      if (verbose) message(paste("Saved",coocOutFile))
-      flush.console()
-    }
-    gc()
+
     if (verbose) message("Starting to calculate pseudoinverse.")
     flush.console()
     n = dim(condProbsCues)[1]

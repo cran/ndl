@@ -1,9 +1,17 @@
 Changes for R-package ndl
 
 ################################################### 
-Changes in version 0.2.12 (Nov 3rd, 2013) (since version 0.2.11)
+Changes in version 0.2.14 (Nov 11th, 2013) (since version 0.2.13)
+
+* Fixed a big bug in estimateWeights that reordered rows of the output.
+* Fixed a bug in orthoCoding that was caused by global variable collisions.
+* Added more error checking on input to functions.
+
+################################################### 
+Changes in version 0.2.12  and 0.2.13 (Nov 3rd, 2013) (since version 0.2.11)
 
 * Fixed problem with print.ndlClassify.
+* Fixed issue with OpenMP compilation
 
 ################################################### 
 Changes in version 0.2.11 (Sept 23rd, 2013) (since version 0.2.10)

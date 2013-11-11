@@ -1,8 +1,9 @@
 ### estimateWeights uses an Rcpp module for faster computation of co-occurrence counts.
 ### See R documentation for more info.
+
 estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALSE, verbose=FALSE, trueCondProb=TRUE, addBackground=FALSE, hasUnicode=FALSE, ...) {
-    
     ## Internal functions.
+    ## Convert UTF8 code points to integers
     toInt = function(char) {
         if (char != '_') { 
             return(paste(utf8ToInt(char),"*",sep='')) 
@@ -10,7 +11,8 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
             return(char)
         }
     }
-    
+
+    ## Convert integers to UTF8 code points
     toUTF8 = function(token) {
         token = sub('_','',token)
         tok = type.convert(token,as.is=T)
@@ -20,27 +22,34 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
                 return(token)
             }
     }
-    
+
+    ## Operates on lists of strings
     convertCues = function(cuelist) { 
         return(paste(unlist(lapply(unlist(strsplit(cuelist,'')), FUN=toInt)),collapse=''))
     }
     
+    ## Operates on lists of strings
     convertBack = function(cuelist) { 
         return(paste(unlist(lapply(unlist(strsplit(cuelist,'*',fixed=T)), FUN=toUTF8)),collapse=''))
     } 
-        
-####    Sys.setlocale("LC_COLLATE", "C")
+
+    if (!is.data.frame(cuesOutcomes)) {
+        stop("Error: The argument 'cuesOutcomes' must be a dataframe.")
+    }
+    
     basename <- NULL
     basename = paste(substitute(cuesOutcomes))
-    loaded = FALSE
     coocFile = paste(basename,".coocCues.rds",sep='')
     coocOutFile = paste(basename,".coocCuesOutcomes.rds",sep='')
+    # Check if pre-computed counts exist. If so, load them
     if (file.exists(coocFile) && file.exists(coocOutFile) ) {
-        if (verbose) message("NOTE: Loading pre-computed coocurrence matrices. Ignoring DataFrame Provided.")
+        message(paste(c("NOTE: Loading pre-computed coocurrence matrices.\nIgnoring DataFrame '", basename, "' Provided.\nPlease remove the files ",coocFile," and ",coocOutFile, " if this behavior is not desired.")),sep="")
+        if (removeDuplicates && verbose) {
+            warning("Did not remove duplicates because there were pre-computed cooccurrence matrices availbe. Remove these files and run again.")
+        }
         flush.console()
         coocCues = readRDS(coocFile)
         coocCuesOutcomes = readRDS(coocOutFile)
-        loaded = TRUE
     } else {
         empty.cues <- grep("(^_)|(__)|(_$)", cuesOutcomes$Cues)
         if(length(empty.cues)>0)
@@ -65,7 +74,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
         if(length(NA.outcomes)>0)
             stop(paste("NA's in 'Outcomes': ",length(NA.outcomes)," cases.",sep=""))
         
-                                        # Fixing unicode sorting errors.
+        ## Fixing unicode sorting errors.
         if (hasUnicode) {
             cuesOutcomes$Cues = unlist(lapply(cuesOutcomes$Cues,FUN=convertCues))
         }
@@ -75,56 +84,57 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
         coocCues = CuAndCo[[1]]
         coocCuesOutcomes = CuAndCo[[2]]
         rm(CuAndCo)
+        gc()
+        ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
+        if (saveCounts) {
+            if (verbose) message("Completed Event Counts. Saving Cooc Data for future calculations.")
+            flush.console()
+            saveRDS(coocCues, file=coocFile)
+            if (verbose) message(paste("Saved ",coocFile))
+            flush.console()
+            saveRDS(coocCuesOutcomes, file=coocOutFile)
+            if (verbose) message(paste("Saved ",coocOutFile))
+            flush.console()
+        }
     }
+    # At this point we should have cooc counts for Cue-Cue and Cue-Outcome
+    
     if (verbose) message("Starting to process matrices.")
     ## Check sanity of arguments
     if ((addBackground) & (!trueCondProb)) {
-        if (verbose) {
-            message("*WARNING: Can't add background rates without true conditional probabilities. \n*ACTION: Proceeding without background rates.")
-        }
+        message("*WARNING: Can't add background rates without true conditional probabilities. \n*ACTION: Proceeding without background rates.")
         addBackground = FALSE
     }
-    
+    ## If requested, add background rates for Cue-Cue cooccurrence
     if (addBackground & trueCondProb) {
-      ## Add background for Cue-Cue cooc
-      cueTotals = diag(coocCues)
-      grandTotal = sum(cueTotals)
-      coocCues["Environ",] = cueTotals
-      coocCues[,"Environ"] = cueTotals
-      coocCues["Environ","Environ"] = grandTotal
+        cueTotals = diag(coocCues)
+        grandTotal = sum(cueTotals)
+        coocCues["Environ",] = cueTotals
+        coocCues[,"Environ"] = cueTotals
+        coocCues["Environ","Environ"] = grandTotal
     }
     else {
-      ## remove rows and columns reserved for background rates
-      coocCues=coocCues[!rownames(coocCues) %in% "Environ", !colnames(coocCues) %in% "Environ" ]
-      coocCuesOutcomes=coocCuesOutcomes[!rownames(coocCuesOutcomes) %in% "Environ",]
+        ## remove rows and columns reserved for background rates
+        coocCues=coocCues[!rownames(coocCues) %in% "Environ", !colnames(coocCues) %in% "Environ" ]
+        coocCuesOutcomes=coocCuesOutcomes[!rownames(coocCuesOutcomes) %in% "Environ",]
     }
+
+    # At this point we begin to normalize the counts.
+    
     if (trueCondProb) {
-      #Convert Cue-Outcome counts to Cue-Outcome Probabilities using diagonal
-      cueTotals = diag(coocCues) 
-      cueTotals[cueTotals == 0] = 1
-      condProbsCues = coocCues/cueTotals
-      probsOutcomesGivenCues = coocCuesOutcomes/cueTotals
+        ##Convert Cue-Outcome counts to Cue-Outcome Probabilities using diagonal
+        cueTotals = diag(coocCues) 
+        cueTotals[cueTotals == 0] = 1
+        condProbsCues = coocCues/cueTotals
+        probsOutcomesGivenCues = coocCuesOutcomes/cueTotals
     } else {
-      ## use the original algorithm for normalization
-      rowsums = rowSums(coocCuesOutcomes)
-      rowsums[rowsums == 0] = 1
-      condProbsCues = coocCues/rowsums
-      probsOutcomesGivenCues = coocCuesOutcomes/rowsums
-  }
-### Sort the matrices in alphabetical order.
-    coocCues = coocCues[order(rownames(coocCues)),order(colnames(coocCues))]
-    coocCuesOutcomes = coocCuesOutcomes[order(rownames(coocCuesOutcomes)),order(colnames(coocCuesOutcomes))]
-    ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
-    if (saveCounts & !loaded) {
-        if (verbose) message("Completed Event Counts. Saving Cooc Data for future calculations.")
-        flush.console()
-        saveRDS(coocCues, file=coocFile)
-        if (verbose) message(paste("Saved ",coocFile))
-        flush.console()
-        saveRDS(coocCuesOutcomes, file=coocOutFile)
-        if (verbose) message(paste("Saved ",coocOutFile))
-        flush.console()
+        ## use the original algorithm for normalization
+        rowsums = rowSums(coocCuesOutcomes)
+        rowsums[rowsums == 0] = 1
+        condProbsCues = coocCues/rowsums
+        probsOutcomesGivenCues = coocCuesOutcomes/rowsums
     }
+
     if (verbose) message("Starting to calculate pseudoinverse.")
     flush.console()
     n = dim(condProbsCues)[1]

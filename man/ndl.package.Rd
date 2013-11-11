@@ -27,8 +27,8 @@
 \tabular{ll}{
 Package: \tab ndl\cr
 Type: \tab Package\cr
-Version: \tab 0.2.13\cr
-Date: \tab 2013-11-06\cr
+Version: \tab 0.2.14\cr
+Date: \tab 2013-11-11\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }

@@ -1,8 +1,8 @@
 orthoCoding = function (strings=c("hel.lo","wor.ld"), grams = c(2), tokenized = F, sepToken = '.') {
+    
+    if (length(grams) < 1) { stop("This function requires a non-zero length vector of n-gram sizes for the argument 'grams'.")}
 
-    if (length(grams) < 1) { stop("This function requires a non-zero length vector of n-gram sizes.")}
-
-    if (! is.numeric(grams)) { stop("This function requires a vector of one or more numbers of n-gram sizes.")}
+    if (! is.numeric(grams)) { stop("This function requires a vector of one or more numbers of n-gram sizes for the argument 'grams'.")}
     
     ngram.fnc = function(s, n) {
         if (n == 1) { # remove hash cues for unigrams
@@ -25,13 +25,13 @@ sepToken,'#', sep = ""))
 
     for (i in 1:length(grams)) {
         cuesi = unlist(lapply(letters, FUN = ngram.fnc, grams[i]))
-        if (exists("cues") == 0) {
-            cues = cuesi
+        if (exists("mycues") == 0) {
+            mycues = cuesi
         } else {
-            cues = paste(cues, cuesi, sep = "_")
+            mycues = paste(mycues, cuesi, sep = "_")
         }
     }
-    return(cues)
+    return(mycues)
 }
 
 ## Old version... now depreciated.

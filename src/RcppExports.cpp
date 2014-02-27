@@ -6,28 +6,38 @@
 using namespace Rcpp;
 
 // learn
-List learn(std::string data, const bool RemoveDuplicates, const bool verbose, const size_t MaxEvents, const bool addBackground);
+SEXP learn(std::string data, const bool RemoveDuplicates, const bool verbose, const size_t MaxEvents, const bool addBackground);
 RcppExport SEXP ndl_learn(SEXP dataSEXP, SEXP RemoveDuplicatesSEXP, SEXP verboseSEXP, SEXP MaxEventsSEXP, SEXP addBackgroundSEXP) {
 BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    std::string data = Rcpp::as<std::string >(dataSEXP);
-    bool RemoveDuplicates = Rcpp::as<bool >(RemoveDuplicatesSEXP);
-    bool verbose = Rcpp::as<bool >(verboseSEXP);
-    size_t MaxEvents = Rcpp::as<size_t >(MaxEventsSEXP);
-    bool addBackground = Rcpp::as<bool >(addBackgroundSEXP);
-    List __result = learn(data, RemoveDuplicates, verbose, MaxEvents, addBackground);
-    return Rcpp::wrap(__result);
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< std::string >::type data(dataSEXP );
+        Rcpp::traits::input_parameter< const bool >::type RemoveDuplicates(RemoveDuplicatesSEXP );
+        Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP );
+        Rcpp::traits::input_parameter< const size_t >::type MaxEvents(MaxEventsSEXP );
+        Rcpp::traits::input_parameter< const bool >::type addBackground(addBackgroundSEXP );
+        SEXP __result = learn(data, RemoveDuplicates, verbose, MaxEvents, addBackground);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
 END_RCPP
 }
 // learnLegacy
-List learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose);
+SEXP learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose);
 RcppExport SEXP ndl_learnLegacy(SEXP DFinSEXP, SEXP RemoveDuplicatesSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    SEXP DFin = Rcpp::as<SEXP >(DFinSEXP);
-    bool RemoveDuplicates = Rcpp::as<bool >(RemoveDuplicatesSEXP);
-    bool verbose = Rcpp::as<bool >(verboseSEXP);
-    List __result = learnLegacy(DFin, RemoveDuplicates, verbose);
-    return Rcpp::wrap(__result);
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< SEXP >::type DFin(DFinSEXP );
+        Rcpp::traits::input_parameter< const bool >::type RemoveDuplicates(RemoveDuplicatesSEXP );
+        Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP );
+        SEXP __result = learnLegacy(DFin, RemoveDuplicates, verbose);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
 END_RCPP
 }

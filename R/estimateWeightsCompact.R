@@ -22,8 +22,9 @@ estimateWeightsCompact <-
         coocCues = CuAndCo[[1]]
         coocCuesOutcomes = CuAndCo[[2]]
         coocOutcomesFreq = CuAndCo[[3]]
-        rm(CuAndCo)
-        gc()
+        if ((nrow(coocCuesOutcomes) <2) | (ncol(coocCuesOutcomes) <2)) {
+            stop("Your data had insufficient number of unique cues or outcomes. Please make sure that you have at least two cues and at least two outcomes.")
+        }
         ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
         if (saveCounts) {
             if (verbose) message("Completed Event Counts. Saving so-occurrence data for future calculations.")

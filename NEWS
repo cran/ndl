@@ -1,6 +1,14 @@
 Changes for R-package ndl
 
 ################################################### 
+Changes in version 0.2.15 (Feb 27th, 2013) (since version 0.2.14)
+
+* Fixed error that caused R to crash during garbage collection. This may have
+been due to a mysterious interactions between Rcpp and gc, but I am not sure
+what it was. Changing the type of returned object from Rcpp::List to SEXP fixed it.
+* Other minor fixes and error checking.
+
+################################################### 
 Changes in version 0.2.14 (Nov 11th, 2013) (since version 0.2.13)
 
 * Fixed a big bug in estimateWeights that reordered rows of the output.

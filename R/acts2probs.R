@@ -1,5 +1,5 @@
+#Internal Function
 acts2probs <- function(acts) {
-
   acts.minimum.correction=1e-10
   acts.minimum = abs(min(acts))
   if(acts.minimum==0)
@@ -17,6 +17,5 @@ acts2probs <- function(acts) {
 
   result <- list(p = p, predicted = predictions)
   return(result)
-
 }
 

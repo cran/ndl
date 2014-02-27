@@ -1,5 +1,5 @@
 /* 
-Copyright (C) 2012,2013  Cyrus Shaoul 
+Copyright (C) 2012,2013,2014  Cyrus Shaoul 
 
 This file is part of the ndl package.
 
@@ -49,7 +49,6 @@ This file is part of the ndl package.
 #include <Rcpp.h>
 
 //Removed due to issues with MacOsX and Windoze
-
 //#include <sys/sysinfo.h>
 
 // Namespaces to search
@@ -65,6 +64,8 @@ struct Event
 {
   vector<size_t> Cues;
   vector<size_t> Outcomes;
+  // added in ndl v0.2.15. Breaks compatibility with previous versions
+  size_t Freq;
 };
 
 // Another core data structure: An ordered list of Events
@@ -76,7 +77,7 @@ bool operator==(const Event& lhs, const Event& rhs)
   return lhs.Cues==rhs.Cues && lhs.Outcomes==rhs.Outcomes;
 }
 
-// Cyrus says: Yes, this is my own non-portable binary data
+// Cyrus says: This is my own non-portable binary data
 // serialization scheme.  I created it to avoid any dependencies on
 // external libraries, such as BOOST_SERIALIZATION.
 // 
@@ -93,16 +94,32 @@ bool operator==(const Event& lhs, const Event& rhs)
 // Then read that many numbers, 4 bytes each. Each number is a CueID
 // The next 4-bytes is the number of Outcomes (NumOutcomes).
 // Next read that many numbers. Each number is an OutcomeID.
+// The final 4 bytes is the frequency of that event.
 // The next 4 bytes is the number of cues in the next event, and so on.
 // Repeat until you have read all the events (NumEvents of them).
 // CueID and OutcomeID files should be stored separately.
 //
+// As of version 0.2.15 of the ndl package, the binary format is now
+// marked with version numbers and a special number to identify the
+// type of binary file uniquely.
+//
 
 Events readEvents(const string ifilename) {
+  // File type and version constants.
+  size_t MAGIC_NUMBER=14159265;
+  size_t CURRENT_VERSION=215;
+  size_t i,j,NumCues,NumOutcomes,NumEvents,num,magic,version;
+  // Cretate Events object.
   Events myEvents;
-  myEvents.clear();
+  // Open binary data file.
   ifstream is(ifilename.c_str(), ios::in | ios::binary);
-  size_t i,j,NumCues,NumOutcomes,NumEvents,num;
+  // Read first two numbers.
+  is.read(reinterpret_cast<char *>(&magic), sizeof(magic));
+  is.read(reinterpret_cast<char *>(&version), sizeof(version));
+  if ((magic != MAGIC_NUMBER) || (version < CURRENT_VERSION)) {
+    Rcerr << "Error loading input file " << ifilename << ". Wrong data format or the version is too old. Please update the data to the newest format and try running again. " << endl;
+  }
+  // Begin reading in data.
   is.read(reinterpret_cast<char *>(&num), sizeof(num));
   NumEvents = num;
   Event myEvent;
@@ -119,13 +136,17 @@ Events readEvents(const string ifilename) {
       is.read(reinterpret_cast<char *>(&num), sizeof(num));
       myEvent.Outcomes.push_back(num);
     }
+    is.read(reinterpret_cast<char *>(&num), sizeof(num));
+    myEvent.Freq = num;
     myEvents.push_back(myEvent);
     myEvent.Cues.clear();
     myEvent.Outcomes.clear();
+    myEvent.Freq = 0;    
   }
   is.close();
   return(myEvents);
 }
+
 
 
 // Convert a string to an Interger
@@ -141,6 +162,7 @@ static size_t stringToInt(const string& str, const bool verbose)
     // else
     if (verbose) Rcerr << "While reading input: '"  <<  str  << "' is not an number!\n";
     stop("Ending Exectution");
+    return 0;
 }
 
 // Split a string on a character delimiter
@@ -164,7 +186,9 @@ static vector<size_t> extract(string item, Dict D) {
   vector<size_t> output;
   vector<string> elems = split(item,'_');
   for (size_t i = 0; i < elems.size(); i++) {
-    output.push_back(D[elems[i]]);
+    if (elems[i] != "") {
+      output.push_back(D[elems[i]]);
+    }
   }
   return(output);
 }
@@ -184,13 +208,18 @@ static void ProcessLegacyData(
 {
   vector<size_t> EvCues, EvOutcomes;
   string CueStr, OutcomeStr;
-  size_t h,i,j,lenCues, lenOutcomes;
+  size_t i,j,lenCues, lenOutcomes;
+  int h;
   size_t count = 0;
-  int id;
+  size_t skip = 1000;
+  //  int id;
   if (verbose) Rcerr << "Starting to Process Events. Number of events processed:\n";
-  for (h=0; h < Frequency.size(); h++) {
+  for (h=0 ; h < Frequency.size(); h++) {
     //    Rcerr << "Working on Event #" << h << endl;
     count++;
+    if ((count > 100000) && (skip < 100000)) {
+      skip = 100000;
+    }
     if ((count +1) % 1000 == 0) {
       if (verbose) Rcerr << count + 1 << " ";
     }
@@ -211,7 +240,7 @@ static void ProcessLegacyData(
     for (i = 0; i < lenCues; i++)  {
       for (j = i; j < lenCues; j++)  {
 	//Increase count for this cue-cue co-occurrene, including Frequency info
-	if ((EvCues[i] == EvCues[j]) & (i!=j)) {
+	if ((EvCues[i] == EvCues[j]) && (i!=j)) {
 	  continue;
 	}
 	CuMat(EvCues[i],EvCues[j]) = CuMat(EvCues[i],EvCues[j]) + Frequency[h];
@@ -253,11 +282,10 @@ static void ProcessData( vector<string> files,
   // Local Variables
   vector<size_t> EvCues, EvOutcomes;
   string CueStr, OutcomeStr;
-  size_t g,h,i,j,lenCues, lenOutcomes;
+  size_t g,h,i,j,lenCues, lenOutcomes, EvFreq;
   size_t count = 0;
   Events theEvents;
-  if (verbose) Rcerr <<  "Starting to Process Event Files:"
-		     << " (One dot per million events.)\n";
+  if (verbose) Rcerr <<  "Starting to Process Event Files. Currently processing file number: ";
   // loop over all the event data files
   for (g = 0; g < files.size(); g++) {
     // Stop adding events if we are over our event limit.
@@ -274,11 +302,12 @@ static void ProcessData( vector<string> files,
     //    Rcerr << "Size of theEvents =  " << numEvents << endl;
     for (h = 0; h < numEvents; h++) {
       count++;
-      if (count % 1000000 == 0) {
-	if (verbose) Rcerr << "." << flush;
-      }
+      //      if (count % 1000000 == 0) {
+      //	if (verbose) Rcerr << "." << flush;
+      //      }
       EvCues = theEvents[h].Cues;
       EvOutcomes = theEvents[h].Outcomes;
+      EvFreq = theEvents[h].Freq;
       // remove duplicate outcomes.
       sort( EvOutcomes.begin(), EvOutcomes.end() );
       EvOutcomes.erase( unique( EvOutcomes.begin(), EvOutcomes.end() ), 
@@ -307,25 +336,25 @@ static void ProcessData( vector<string> files,
       for (i = 0; i < lenCues; i++) {
 	for (j = i; j < lenCues; j++) {
 	  // Only count identical cues once
-	  if ((EvCues[i] == EvCues[j]) & (i != j)) {
+	  if ((EvCues[i] == EvCues[j]) && (i != j)) {
 	    continue;
 	  }
-	  CuMat(EvCues[i],EvCues[j])++;
+	  CuMat(EvCues[i],EvCues[j]) += EvFreq;
 	  if (EvCues[i] != EvCues[j]) {
-	    CuMat(EvCues[j],EvCues[i])++;
+	    CuMat(EvCues[j],EvCues[i]) += EvFreq;
 	  }
 	}
       }
       for (i = 0; i < lenCues; i++) {
 	  for (j = 0; j < lenOutcomes; j++) {
 	    //Increase count for this cue-cue co-occurrence
-	    CoMat(EvCues[i],EvOutcomes[j])++;
+	    CoMat(EvCues[i],EvOutcomes[j])  += EvFreq;
 	  }
       }
       // Add background rates to Environ, if requested
       if (addBackground) {
 	for (j = 0; j < lenOutcomes; j++) {
-	  CoFreq(EvOutcomes[j])++;
+	  CoFreq(EvOutcomes[j]) += EvFreq;
 	}
       }
     }
@@ -334,14 +363,13 @@ static void ProcessData( vector<string> files,
   if (verbose) Rcerr << endl << "Processed a total of " << count << " discrete events." << endl;
 }
 
-
 // Extract all the unique elements from a vector and return them in a vector.
 void extractUnique(StringVector &items, Dict &output, StringVector &Uniq) {
   set<string> uniq;
   vector<string> elems;
   string str;
   // split all strings on the underscore and insert into a set (forcing uniqueness).
-  for (size_t i=0; i < items.size(); i++) {
+  for (int i=0; i < items.size(); i++) {
     str = items[i];
     elems = split(str,'_');
     copy( elems.begin(), elems.end(), inserter( uniq, uniq.end() ) );
@@ -412,10 +440,16 @@ void getDir (string dir, vector<string> &files)
 
 // Learn the cue-outcome relationships from individual exposure events.
 
+/* This caused the problems!!!!
+
+  List learn(string data, const bool RemoveDuplicates, const bool verbose, const size_t MaxEvents, const bool addBackground) 
+
+*/
+
 // [[Rcpp::export]]
-List learn(std::string data, const bool RemoveDuplicates, const bool verbose, const size_t MaxEvents, const bool addBackground)
+SEXP learn(std::string data, const bool RemoveDuplicates, const bool verbose, const size_t MaxEvents, const bool addBackground)
 {
-  if (verbose) Rcerr << "Entering c++ learning module." << endl;  // main loop
+  if (verbose) Rcerr << "Entering c++ learning module." << endl;  
 
   try
     {
@@ -434,9 +468,17 @@ List learn(std::string data, const bool RemoveDuplicates, const bool verbose, co
 
       size_t NumCues = Cues.size();
       size_t NumOutcomes = Outcomes.size();
+      if (NumCues < 2 ) {
+	if (verbose)  Rcerr << "ERROR: Insufficient number of cues. Cannot continue. \n" ;
+	return List::create();
+      }
+      if (NumOutcomes < 2 ) {
+	if (verbose)  Rcerr << "ERROR: Insufficient number of outcomes. Cannot continue. \n" ;
+	return List::create();
+      }
       if (verbose)  Rcerr << "Loaded the data and got " << NumCues 
-			   << " unique cues and " << NumOutcomes 
-			   << " unique outcomes.\n"; 
+			  << " unique cues and " << NumOutcomes 
+			  << " unique outcomes.\n"; 
       //Initialize matrices
       NumericMatrix CoMat(NumCues,NumOutcomes);
       if (verbose) Rcerr << "Created a Cue-Outcome matrix that is " 
@@ -454,9 +496,9 @@ List learn(std::string data, const bool RemoveDuplicates, const bool verbose, co
       vector<string> files = vector<string>();
       getDir(dir,files);
       // Main loop to process learning events.
-      ProcessData(files, CoMat, CuMat, RemoveDuplicates, 
-		  verbose, MaxEvents, CueMap, 
-		  OutcomeMap, addBackground, CoFreq);
+      ProcessData(files, CoMat, CuMat, RemoveDuplicates,
+ 		  verbose, MaxEvents, CueMap,
+ 		  OutcomeMap, addBackground, CoFreq);
 
       // Create dimname lists
       List CuDims = List::create(Cues, Cues);
@@ -470,9 +512,9 @@ List learn(std::string data, const bool RemoveDuplicates, const bool verbose, co
       if (verbose) Rcerr << "Leaving c++ learning module." << endl;
 
       return List::create(Named("CueCue") = CuMat,
-			  Named("CueOutcome") = CoMat,
-			  Named("OutcomeFreq") = CoFreq
-			  );
+       			  Named("CueOutcome") = CoMat,
+       			  Named("OutcomeFreq") = CoFreq
+       			  );
     }
   catch (const bad_alloc& x)
     {
@@ -481,18 +523,19 @@ List learn(std::string data, const bool RemoveDuplicates, const bool verbose, co
     }
   catch(const std::exception &ex ) 
     {             // or use END_RCPP macro
-    forward_exception_to_r( ex );
+      forward_exception_to_r( ex );
     } 
   catch(...) 
     { 
-    ::Rf_error( "c++ exception (unknown reason)" ); 
+      ::Rf_error( "c++ exception (unknown reason)" ); 
     }
+  return List::create(1);
 }
 
 // Use the legacy format, accept a DataFrame and return the correct Matrices.
 
 // [[Rcpp::export]]
-List learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
+SEXP learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
 {
   try
     {
@@ -548,7 +591,7 @@ List learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
       if (verbose) Rcerr << "Leaving c++ learning module." << endl;
 
       return List::create(Named("CueCue") = CuMat,
-			  Named("CueOutcome") = CoMat) ;
+			  Named("CueOutcome") = CoMat);
 
     }
   catch (const bad_alloc& x)
@@ -563,6 +606,7 @@ List learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
     { 
       ::Rf_error( "c++ exception (unknown reason)" ); 
     }
+  return List::create();
 }
 
 

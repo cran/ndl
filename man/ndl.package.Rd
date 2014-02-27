@@ -6,7 +6,6 @@
   Naive discriminative learning: an implementation in R
 }
 \description{
-
   Naive discriminative learning implements classification models based
   on the Rescorla-Wagner equations and the equilibrium equations of
   the Rescorla-Wagner equations.  This package provides three kinds of
@@ -21,60 +20,76 @@
   forests, etc.) and discrimination learning.  Compared to standard
   classification algorithms, naive discriminative learning may overfit
   the data, albeit gracefully.
-
 }
 \details{
 \tabular{ll}{
 Package: \tab ndl\cr
 Type: \tab Package\cr
-Version: \tab 0.2.14\cr
-Date: \tab 2013-11-11\cr
+Version: \tab 0.2.16\cr
+Date: \tab 2014-02-28\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
 
-For more detailed information on the core  Rescorla-Wagner equations, see the functions
-\code{\link{RescorlaWagner}} and \code{\link{plot.RescorlaWagner}}, as
-well as the data sets \code{\link{danks}}, \code{\link{numbers}} (data
-courtesy of Michael Ramscar), and \code{\link{lexample}} (an example
-discussed in Baayen et al. 2011).
+For more detailed information on the core Rescorla-Wagner equations, see
+the functions \code{\link{RescorlaWagner}} and
+\code{\link{plot.RescorlaWagner}}, as well as the data sets
+\code{\link{danks}}, \code{\link{numbers}} (data courtesy of Michael
+Ramscar), and \code{\link{lexample}} (an example discussed in Baayen et
+al. 2011).
 
 The functions for the naive discriminative learning (at the user level)
 are \code{\link{estimateWeights}} and
 \code{\link{estimateActivations}}. The relevant data sets are
-\code{\link{serbian}}, \link{serbianUniCyr},\link{serbianUniLat}, and \code{\link{serbianLex}}.  The examples for
-\code{\link{serbianLex}} present the full simulation for Experiment 1
-of Baayen et al. (2011).
+\code{\link{serbian}}, \link{serbianUniCyr},\link{serbianUniLat}, and
+\code{\link{serbianLex}}.  The examples for \code{\link{serbianLex}}
+present the full simulation for Experiment 1 of Baayen et al. (2011).
 
 Key functionality for the user is provided by the functions
 \code{\link{orthoCoding}}, \code{\link{estimateWeights}}, and
-\code{estimateActivations}.  \code{orthoCoding} calculates the letter n-grams for
-character strings, to be used as cues.  It is assumed that meaning or meanings
-(separated by underscores if there are more then one) are available as outcomes.  The
-frequency with which each (unique) combination of cues and outcomes
-occurs are required.  For some example input data sets, see:
-\code{\link{danks}}, \code{\link{plurals}}, \code{\link{serbian}},
-\code{\link{serbianUniCyr}} and \code{\link{serbianUniLat}}.
+\code{estimateActivations}.  \code{orthoCoding} calculates the letter
+n-grams for character strings, to be used as cues.  It is assumed that
+meaning or meanings (separated by underscores if there are more then
+one) are available as outcomes.  The frequency with which each (unique)
+combination of cues and outcomes occurs are required.  For some example
+input data sets, see: \code{\link{danks}}, \code{\link{plurals}},
+\code{\link{serbian}}, \code{\link{serbianUniCyr}} and
+\code{\link{serbianUniLat}}.
 
-The function \code{estimateWeights} estimates the association
+The function \code{\link{estimateWeights}} estimates the association
 strengths of cues to outcomes, using the equilibrium equations presented
-in Danks (2003).  The function \code{estimateActivations} estimates the
+in Danks (2003).  The function \code{\link{estimateActivations}} estimates the
 activations of outcomes (meanings) given cues (n-grams).
 
-The Rcpp-based learn and learnLegacy functions use a C++ function to
-compute the conditional co-occurrence matrices required in the
-equilibrium equations.
+The Rcpp-based \code{\link{learn}} and \code{\link{learnLegacy}}
+functions use a C++ function to compute the conditional co-occurrence
+matrices required in the equilibrium equations.
 
 The key function for naive discriminative classification is
 \code{\link{ndlClassify}}; see data sets \code{\link{think}} and
 \code{\link{dative}} for examples.
-
 } 
+
 \author{
 Cyrus Shaoul, Antti Arppe, Peter Hendrix, Petar Milin, and R. Harald Baayen.
 
 Maintainer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+
+Author Contributions:
+Initial concept by R. Harald Baayen with contributions from Petar Milin
+and Peter Hendrix. First R coding done by R. Harald Baayen.
+
+Initial R package development until version 0.1.6 by Antti
+Arppe. Initial documentation by Antti Arppe.  Initial optimizations in
+C by Petar Milin and Antti Arppe.
+
+Classification functionality developed further by Antti Arppe.
+
+In version 0.2.14 onwards, improvements to the NDL algorithm by Petar
+Milin and Cyrus Shaoul. In version 0.2.14 onwards, improved
+performance optimizations (C++ and Rcpp) by Cyrus Shaoul.
 }
+
 \references{
   Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and
   Hendrix, P. and Marelli, M., An amorphous model for morphological

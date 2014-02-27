@@ -2,7 +2,11 @@
  
 The NDL package implements the Danks Equilibra ([read the paper here][1]) for the Rescorla Wagner model of learning ([read about the RW model here][2]).
 
-New in version 0.2.13, released on Nov 7th, 2013:
+New in version 0.2.16, released on Feb 27th, 2013:
+
+* Bug fixes and error checking. No new features.
+
+New in version 0.2.15, released on Dec 16th, 2013:
 
 * improved speed in counting co-occurrence counts through the use of Rcpp and C++ functions.
 * improved scalability: it can process many millions of events, with much larger numbers of cues and outcomes.

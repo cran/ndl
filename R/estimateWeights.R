@@ -45,28 +45,23 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     if (file.exists(coocFile) && file.exists(coocOutFile) ) {
         message(paste(c("NOTE: Loading pre-computed coocurrence matrices.\nIgnoring DataFrame '", basename, "' Provided.\nPlease remove the files ",coocFile," and ",coocOutFile, " if this behavior is not desired.")),sep="")
         if (removeDuplicates && verbose) {
-            warning("Did not remove duplicates because there were pre-computed cooccurrence matrices availbe. Remove these files and run again.")
+            warning("Did not remove duplicates because there were pre-computed cooccurrence matrices availabe. Please Manually remove the files and run again to make sure that duplicates are removed.")
         }
         flush.console()
         coocCues = readRDS(coocFile)
         coocCuesOutcomes = readRDS(coocOutFile)
     } else {
-        empty.cues <- grep("(^_)|(__)|(_$)", cuesOutcomes$Cues)
-        if(length(empty.cues)>0)
-            stop("Incorrectly placed underscore(s) in 'Cues'.\n")
-        
-        empty.outcomes <- grep("(^_)|(__)|(_$)", cuesOutcomes$Outcomes)
-        if(length(empty.outcomes)>0)
-            stop("Incorrectly placed underscore(s) in 'Outcomes'.\n")
-        
-        NA.cue_strings <- grep("(^NA_)|(_NA_)|(_NA$)",cuesOutcomes$Cues)
-        NA.outcome_strings <- grep("(^NA_)|(_NA_)|(_NA$)",cuesOutcomes$Outcomes)
-        
-        if(length(NA.cue_strings)>0)
-            warning(paste("Potential NA's in ",length(NA.cue_strings)," 'Cues'.",sep=""))
-        if(length(NA.outcome_strings)>0)
-            warning(paste("Potential NA's in ",length(NA.outcome_strings)," 'Outcomes'.",sep=""))
-        
+        ## check for valid column names
+        if (!("Cues" %in% colnames(cuesOutcomes))) {
+            stop("The 'Cues' column is missing from your dataframe. Please correct the column name and try again. ")
+        }
+        if (!("Outcomes" %in% colnames(cuesOutcomes))) {
+            stop("The 'Outcomes' column is missing from your dataframe. Please correct the column name and try again. ")
+        }
+        if (!("Frequency" %in% colnames(cuesOutcomes))) {
+            warning("The 'Frequency' column is missing from your dataframe. A column of constant frequencies (1) will be added.")
+            cuesOutcomes$Frequency=1
+        }
         NA.cues <- which(is.na(cuesOutcomes$Cues))
         NA.outcomes <- which(is.na(cuesOutcomes$Outcomes))
         if(length(NA.cues)>0)
@@ -80,11 +75,16 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
         }
         
         ## Call Rcpp function to process all events.
+        coocCues = matrix()
         CuAndCo = learnLegacy(DFin=cuesOutcomes, RemoveDuplicates=removeDuplicates, verbose=verbose)
         coocCues = CuAndCo[[1]]
         coocCuesOutcomes = CuAndCo[[2]]
-        rm(CuAndCo)
-        gc()
+        if ((nrow(coocCuesOutcomes) <2) | (ncol(coocCuesOutcomes) <2)) {
+            stop("Your data had insufficient number of unique cues or outcomes. Please make sure that you have at least two cues and at least two outcomes.")
+        }
+        ## Recommended for removal by Brian Ripley
+        #        rm(CuAndCo)
+        # gc()
         ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
         if (saveCounts) {
             if (verbose) message("Completed Event Counts. Saving Cooc Data for future calculations.")
@@ -140,6 +140,8 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     n = dim(condProbsCues)[1]
     if (n < 20000) {
         pseudoinverse = ginv(condProbsCues)
+        ## Could be faster!!! Do some tests!
+        ## pseudoinverse = (t(solve(crossprod(condProbsCues),condProbsCues)))
     } else {
         ## Use an approximation of the pseudoinverse here to make this feasible
         ## average hardware.

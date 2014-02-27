@@ -1,3 +1,4 @@
+# Internal Function
 cueCoding = function(cues=c("hello", "world"), maxn=1, adjacent=FALSE)
 {
   if(adjacent & maxn!=2)

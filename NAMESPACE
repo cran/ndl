@@ -1,2 +1,5 @@
 useDynLib(ndl)
-exportPattern("^[[:graph:]]+")
+export(ndlClassify,anova.ndlClassify,ndlCrossvalidate,predict.ndlClassify, crosstableStatistics, estimateActivations, ndlStatistics, RescorlaWagner,estimateWeightsCompact, ndlVarimp, summary.ndlClassify,estimateWeights, orthoCoding, summary.ndlCrossvalidate,modelStatistics, plot.ndlClassify, plot.RescorlaWagner,acts2probs, cueCoding,ndlCuesOutcomes)
+importFrom(MASS,ginv)
+importFrom(Rcpp, evalCpp)
+

@@ -48,6 +48,7 @@ based on naive discriminative learning. Psychological Review, 118, 438-482.
 See also \code{\link{serbian}, \link{serbianLex}, \link{estimateActivations}}.
 }
 \examples{
+\dontrun{
 data(serbianUniCyr)
 serbianUniCyr$Cues <- orthoCoding(serbianUniCyr$WordForm, grams=2)
 serbianUniCyr$Outcomes <- serbianUniCyr$LemmaCase
@@ -58,5 +59,6 @@ desiredItems$Outcomes=""
 activations <- estimateActivations(desiredItems, sw)$activationMatrix
 rownames(activations) <- unique(serbianUniCyr[["WordForm"]])
 activations[1:5,1:6]
+}
 }
 \keyword{datasets}

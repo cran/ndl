@@ -364,7 +364,7 @@ static void ProcessData( vector<string> files,
 }
 
 // Extract all the unique elements from a vector and return them in a vector.
-void extractUnique(StringVector &items, Dict &output, StringVector &Uniq) {
+size_t extractUnique(StringVector &items, Dict &output, StringVector &Uniq) {
   set<string> uniq;
   vector<string> elems;
   string str;
@@ -382,6 +382,7 @@ void extractUnique(StringVector &items, Dict &output, StringVector &Uniq) {
     id++;
     Uniq.push_back(*theIterator);
   }
+  return(id);
 }
 
 StringVector readInput(const string filename, CMap& MyMap) {
@@ -553,14 +554,31 @@ SEXP learnLegacy(SEXP DFin, const bool RemoveDuplicates, const bool verbose)
       Dict UniqCues, UniqOutcomes;
       // Vector to hold IDs
       StringVector CueList, OutcomeList;
+      size_t max_value = 0;
+      //      UniqCues["Environ"] = UniqCues.size() - 1;
+      // Extract Outcomes from the dataframe.
+      max_value = extractUnique(Outcomes,UniqOutcomes,OutcomeList);
       // Extract Cues from the dataframe.
-      extractUnique(Cues,UniqCues,CueList);
+      max_value = extractUnique(Cues,UniqCues,CueList);
+
+      // // Find maximum Cue Id we can add
+      // typedef Dict::iterator iter;
+      // iter it = UniqCues.begin();
+      // iter end = UniqCues.end();
+      // size_t max_value = it->second;
+      // string str = it->first;
+      // for( ; it != end; ++it) {
+      // 	if(*it->second > max_value) {
+      // 	  max_value = it->second;
+      // 	  str = it->first;
+      // 	}
+      // }
+
       // add background rate Cue to Cue List.
       CueList.push_back("Environ");
       // index for Environ Cue....
-      UniqCues["Environ"] = UniqCues.size() - 1;
-      // Extract Outcomes from the dataframe.
-      extractUnique(Outcomes,UniqOutcomes,OutcomeList);
+      UniqCues["Environ"] = max_value;
+
 
       size_t NumCues = UniqCues.size();
       size_t NumOutcomes = UniqOutcomes.size();

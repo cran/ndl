@@ -1,7 +1,7 @@
 \name{learnLegacy}
 \alias{learnLegacy}
 \title{
-  Count cue-outcome co-occurences needed to run the Danks equations.
+  Count cue-outcome co-occurrences needed to run the Danks equations.
 }
 \description{
   An internal function to count cue-outcome co-occurrences.
@@ -21,14 +21,15 @@ learnLegacy(DFin,RemoveDuplicates,verbose)
  }
  \item{verbose}{
    Display diagnostic messages or not.
- }     
+ }
 }
 \details{
 This function calls an Rcpp function of the same name to process the
 data in the DFin data frame.
 }
 \value{
-  A list of two matrices with cue-cue coocurrences and cue-outcome cooccurrences.
+  A list of two matrices with cue-cue co-occurrences and cue-outcome
+  co-occurrences.
 }
 \references{
 

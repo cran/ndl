@@ -35,6 +35,7 @@ to illustrate the Rescorla-Wagner equations.
   \code{\link{RescorlaWagner}, \link{orthoCoding}}
 }
 \examples{
+\dontrun{
 data(lexample)
 lexample$Cues <- orthoCoding(lexample$Word, grams=1)
 par(mfrow=c(2,2))
@@ -54,5 +55,6 @@ lexample.rw <- RescorlaWagner(lexample, nruns=25, traceCue="s",traceOutcome="as"
 plot(lexample.rw)
 mtext("s - as", 3, 1)
 par(mfrow=c(1,1))
+}
 }
 \keyword{datasets}

@@ -1,7 +1,6 @@
 ndlCuesOutcomes <- function(formula, data, frequency=NA, numeric2discrete=function(x) Hmisc::cut2(x,g=g.numeric), g.numeric=2, check.values=TRUE, ignore.absent=NULL, variable.value.separator="", ...)
 {
-  invisible(require(Hmisc, quietly=TRUE))
-  
+
 #  response = as.character(formula[2])
   response=gsub("[ ]+"," ",paste(deparse(formula[[2]],width.cutoff=500),collapse=""))
   predictors=gsub("[ ]+"," ",paste(deparse(formula[[3]],width.cutoff=500),collapse=""))

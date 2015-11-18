@@ -33,7 +33,6 @@ ndlClassify <- function(formula, data, frequency=NA, variable.value.separator=""
   class(result) <- "ndlClassify"
 
   return(result)
-
 }
 
 print.ndlClassify <- function(x, max.print=10, ...)
@@ -45,10 +44,12 @@ print.ndlClassify <- function(x, max.print=10, ...)
 #       max.print=x$max.print
   cat("\n")
   print(x$call)
-#  cat("\n")
-#  print.formula(x$formula)
   cat("\n")
-  print.table(x$weightMatrix[1:min(nrow(x$weightMatrix),max.print),], digits=digits)
+  print(x$formula)
+  cat("\n")
+  tabl <- x$weightMatrix[1:min(nrow(x$weightMatrix),max.print),]
+  class(tabl) <- "table"
+  print(tabl, digits=digits)
   if(nrow(x$weightMatrix)>max.print)
     cat(paste("... [ omitted ",nrow(x$weightMatrix)-max.print," rows ] ...\n",sep=""))
   cat("\n")

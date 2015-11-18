@@ -27,7 +27,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     convertCues = function(cuelist) { 
         return(paste(unlist(lapply(unlist(strsplit(cuelist,'')), FUN=toInt)),collapse=''))
     }
-    
+
     ## Operates on lists of strings
     convertBack = function(cuelist) { 
         return(paste(unlist(lapply(unlist(strsplit(cuelist,'*',fixed=T)), FUN=toUTF8)),collapse=''))
@@ -36,7 +36,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     if (!is.data.frame(cuesOutcomes)) {
         stop("Error: The argument 'cuesOutcomes' must be a dataframe.")
     }
-    
+
     basename <- NULL
     basename = paste(substitute(cuesOutcomes))
     coocFile = paste(basename,".coocCues.rds",sep='')
@@ -59,7 +59,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
             stop("The 'Outcomes' column is missing from your dataframe. Please correct the column name and try again. ")
         }
         if (!("Frequency" %in% colnames(cuesOutcomes))) {
-            warning("The 'Frequency' column is missing from your dataframe. A column of constant frequencies (1) will be added.")
+            warning("The 'Frequency' column is missing from your dataframe. A column of constant frequencies (1) was added.")
             cuesOutcomes$Frequency=1
         }
         NA.cues <- which(is.na(cuesOutcomes$Cues))
@@ -68,37 +68,24 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
             stop(paste("NA's in 'Cues': ",length(NA.cues)," cases.",sep=""))
         if(length(NA.outcomes)>0)
             stop(paste("NA's in 'Outcomes': ",length(NA.outcomes)," cases.",sep=""))
-        
+
         ## Fixing unicode sorting errors.
         if (hasUnicode) {
             cuesOutcomes$Cues = unlist(lapply(cuesOutcomes$Cues,FUN=convertCues))
         }
-        
+
         ## Call Rcpp function to process all events.
         coocCues = matrix()
+        # learnLegacy is not exported (private)
         CuAndCo = learnLegacy(DFin=cuesOutcomes, RemoveDuplicates=removeDuplicates, verbose=verbose)
         coocCues = CuAndCo[[1]]
         coocCuesOutcomes = CuAndCo[[2]]
-        if ((nrow(coocCuesOutcomes) <2) | (ncol(coocCuesOutcomes) <2)) {
-            stop("Your data had insufficient number of unique cues or outcomes. Please make sure that you have at least two cues and at least two outcomes.")
-        }
         ## Recommended for removal by Brian Ripley
         #        rm(CuAndCo)
         # gc()
-        ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
-        if (saveCounts) {
-            if (verbose) message("Completed Event Counts. Saving Cooc Data for future calculations.")
-            flush.console()
-            saveRDS(coocCues, file=coocFile)
-            if (verbose) message(paste("Saved ",coocFile))
-            flush.console()
-            saveRDS(coocCuesOutcomes, file=coocOutFile)
-            if (verbose) message(paste("Saved ",coocOutFile))
-            flush.console()
-        }
     }
     # At this point we should have cooc counts for Cue-Cue and Cue-Outcome
-    
+
     if (verbose) message("Starting to process matrices.")
     ## Check sanity of arguments
     if ((addBackground) & (!trueCondProb)) {
@@ -107,20 +94,41 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     }
     ## If requested, add background rates for Cue-Cue cooccurrence
     if (addBackground & trueCondProb) {
-        cueTotals = diag(coocCues)
-        grandTotal = sum(cueTotals)
-        coocCues["Environ",] = cueTotals
-        coocCues[,"Environ"] = cueTotals
-        coocCues["Environ","Environ"] = grandTotal
+        ## Check first if Environ has already been computed
+        if (sum(coocCues["Environ",]) == 0 & sum(coocCues[,"Environ"] == 0)) {
+            cueTotals = diag(coocCues)
+#            grandTotal = sum(cueTotals)
+            coocCues["Environ",] = cueTotals
+            coocCues[,"Environ"] = cueTotals
+            coocCues["Environ","Environ"] = sum(cuesOutcomes$Frequency)
+        }
     }
     else {
         ## remove rows and columns reserved for background rates
-        coocCues=coocCues[!rownames(coocCues) %in% "Environ", !colnames(coocCues) %in% "Environ" ]
-        coocCuesOutcomes=coocCuesOutcomes[!rownames(coocCuesOutcomes) %in% "Environ",]
+        coocCues=coocCues[!rownames(coocCues) %in% "Environ", !colnames(coocCues) %in% "Environ" ,drop=FALSE]
+        coocCuesOutcomes=coocCuesOutcomes[!rownames(coocCuesOutcomes) %in% "Environ",,drop=FALSE]
     }
 
+    ## Check for single cue and outcome.
+    if ((nrow(coocCuesOutcomes) <2) & (ncol(coocCuesOutcomes) <2)) {
+        stop("Your data had only one unique cue and one unique outcome, making it impossible to estimate the 'weight'. Please make sure that your training data has more than one and cue or more than one outcome.")
+    }
+
+    ## Save the cooc matrices for later reuse (after doing Background rates and normalization.
+    if (saveCounts) {
+        if (verbose) message("Completed Event Counts. Saving Cooc Data for future calculations.")
+        flush.console()
+        saveRDS(coocCues, file=coocFile)
+        if (verbose) message(paste("Saved ",coocFile))
+        flush.console()
+        saveRDS(coocCuesOutcomes, file=coocOutFile)
+        if (verbose) message(paste("Saved ",coocOutFile))
+        flush.console()
+    }
+
+
     # At this point we begin to normalize the counts.
-    
+
     if (trueCondProb) {
         ##Convert Cue-Outcome counts to Cue-Outcome Probabilities using diagonal
         cueTotals = diag(coocCues) 
@@ -134,6 +142,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
         condProbsCues = coocCues/rowsums
         probsOutcomesGivenCues = coocCuesOutcomes/rowsums
     }
+
 
     if (verbose) message("Starting to calculate pseudoinverse.")
     flush.console()
@@ -153,7 +162,7 @@ estimateWeights <- function(cuesOutcomes, removeDuplicates=TRUE, saveCounts=FALS
     weightMatrix = pseudoinverse %*% probsOutcomesGivenCues
     ## Deal with Unicode issue.
     if (hasUnicode) {
-	rownames(weightMatrix) = unlist(lapply(rownames(coocCues),FUN=convertBack))
+        rownames(weightMatrix) = unlist(lapply(rownames(coocCues),FUN=convertBack))
     } else {
         rownames(weightMatrix) = rownames(coocCues)
     }

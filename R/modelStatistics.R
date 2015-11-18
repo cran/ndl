@@ -31,16 +31,16 @@ modelStatistics <- function(observed, predicted, frequency=NA, p.values, n.data,
 
   # calculate index of concordance C if response variable is binary
   if (length(outcomes) == 2)
-     { invisible(require(Hmisc, quietly=TRUE))
+     {
        if(all(is.na(frequency)))
          { predval = sort(unique(predicted))[1]
            binvec = as.numeric(as.character(observed)==predval)
-           C.statistics = somers2(p.values[,predval], binvec)
+           C.statistics = Hmisc::somers2(p.values[,predval], binvec)
          }
        else
          { predval = sort(unique(predicted))[1]
            binvec = rep(as.numeric(as.character(observed)==predval), frequency)
-           C.statistics = somers2(rep(p.values[,predval],frequency), binvec)
+           C.statistics = Hmisc::somers2(rep(p.values[,predval],frequency), binvec)
          }
 
        statistics <- list(loglikelihood.null = loglikelihood.null, loglikelihood.model = loglikelihood.model, deviance.null = deviance.null, deviance.model = deviance.model, R2.likelihood = R2.likelihood, R2.nagelkerke = R2.nagelkerke, AIC.model = AIC.model, BIC.model = BIC.model, C=C.statistics[["C"]]);

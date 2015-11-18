@@ -1,7 +1,14 @@
 Changes for R-package ndl
 
+###################################################
+Changes in version 0.2.17 (Nov 17th, 2015) (since version 0.2.16)
+
+* Fixed error that resulted in wrong estimates when estimateWeights was used
+under some (all?) circumstances.
+* Hmisc becomes dependency.
+
 ################################################### 
-Changes in version 0.2.15 (Feb 27th, 2013) (since version 0.2.14)
+Changes in version 0.2.16 (Feb 27th, 2013) (since version 0.2.14)
 
 * Fixed error that caused R to crash during garbage collection. This may have
 been due to a mysterious interactions between Rcpp and gc, but I am not sure

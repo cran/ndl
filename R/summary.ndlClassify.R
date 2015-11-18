@@ -11,7 +11,7 @@ summary.ndlClassify <- function(object, ...)
 }
 
 print.summary.ndlClassify <- function(x, digits=max(3,getOption("digits")-3), max.print=10, ...)
-{ 
+{
   if(is.na(max.print))
     max.print= NROW(x$weights)
 #  if(!is.null(x$digits) & is.numeric(x$digits))
@@ -24,7 +24,9 @@ print.summary.ndlClassify <- function(x, digits=max(3,getOption("digits")-3), ma
   cat("\nFormula:\n")
   print(x$formula)
   cat("\nWeights:\n")
-  print.table(x$weights[1:min(nrow(x$weights),max.print),], digits)
+  tabl <- x$weights[1:min(nrow(x$weights),max.print),]
+  class(tabl) <- "table"
+  print(tabl, digits=digits)
   if(nrow(x$weights)>max.print)
     cat(paste("... [ omitted ",nrow(x$weights)-max.print," rows ] ...\n",sep=""))
   cat("\n")

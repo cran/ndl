@@ -63,7 +63,9 @@ activations of outcomes (meanings) given cues (n-grams).
 
 The Rcpp-based \code{\link{learn}} and \code{\link{learnLegacy}}
 functions use a C++ function to compute the conditional co-occurrence
-matrices required in the equilibrium equations.
+matrices required in the equilibrium equations. These are internally
+used by \code{\link{estimateWeights}} and should not be used directly by users
+of the package.
 
 The key function for naive discriminative classification is
 \code{\link{ndlClassify}}; see data sets \code{\link{think}} and

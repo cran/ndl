@@ -1,5 +1,37 @@
 useDynLib(ndl)
-export(ndlClassify,anova.ndlClassify,ndlCrossvalidate,predict.ndlClassify, crosstableStatistics, estimateActivations, ndlStatistics, RescorlaWagner,estimateWeightsCompact, ndlVarimp, summary.ndlClassify,estimateWeights, orthoCoding, summary.ndlCrossvalidate,modelStatistics, plot.ndlClassify, plot.RescorlaWagner,acts2probs, cueCoding,ndlCuesOutcomes)
+
+export(
+    ndlClassify,
+    ndlCrossvalidate,
+    crosstableStatistics,
+    estimateActivations,
+    ndlStatistics,
+    RescorlaWagner,
+    estimateWeightsCompact,
+    ndlVarimp,
+    estimateWeights,
+    orthoCoding,
+    modelStatistics,
+    acts2probs,
+    cueCoding,
+    ndlCuesOutcomes)
+
+importFrom("graphics", "abline", "hist", "legend", "lines", "par", "plot",
+        "plot.default", "points")
+importFrom("stats", "as.formula", "density", "formula", "pchisq", "pnorm",
+        "rnorm", "sd", "terms", "terms.formula")
+importFrom("utils", "combn", "flush.console", "type.convert")
+
 importFrom(MASS,ginv)
 importFrom(Rcpp, evalCpp)
+
+S3method(anova, ndlClassify)
+S3method(plot, ndlClassify)
+S3method(plot, RescorlaWagner)
+S3method(predict, ndlClassify)
+S3method(print, ndlClassify)
+S3method(print, summary.ndlCrossvalidate)
+S3method(print, summary.ndlClassify)
+S3method(summary, ndlClassify)
+S3method(summary, ndlCrossvalidate)
 

@@ -1,7 +1,7 @@
-669db2b6223eeae407f67bd16726495c *DESCRIPTION
-abd70169a41c100deac43ed54133e375 *NAMESPACE
-8062fbdef9a188b1bbb6d205b83a9a67 *NEWS
-50538628e3ef772dc653265949e63c4f *R/RcppExports.R
+2d5df261330ca10d601fb5c6bde6d540 *DESCRIPTION
+712dce8819ee779a2770dcb2bff60c61 *NAMESPACE
+46bb439d7a13b4546f1e63a71b8646da *NEWS
+7351f552829061dc29a1361b821186ce *R/RcppExports.R
 d05940e6dd2f0f9eb12f4f57fed9b15d *R/RescorlaWagner.R
 f1a93e4ebba75ab2e93b4ae0dfa3497d *R/acts2probs.R
 2be85196cd159c6f9553b12361de2c5f *R/anova.ndlClassify.R
@@ -24,7 +24,8 @@ b636dde56c8ffceb5930e56d0cf3d15f *R/predict.ndlClassify.R
 57cc8e4f2311b30e0d9d1c08cea732cc *R/random.pseudoinverse.R
 b36b4fe3bcbc3138b977879392020b21 *R/summary.ndlClassify.R
 e0c91e892fdaa08ff3d8c5369a7d1d85 *R/summary.ndlCrossvalidate.R
-2ec7bd96260bb4ade7f7129c3826c220 *README.md
+d962f298ca48dabc1c8435fc55a31330 *README.md
+6b2b8d01f39aa828870ecad25ed930b1 *build/partial.rdb
 55a9c8d10cc6534e19884a5ec4265079 *data/danks.rda
 5299ee6d463dfeecd21f73f8de4f2af6 *data/dative.rda
 d8b480bdd02234865b5ad8074886332f *data/lexample.rda
@@ -51,7 +52,7 @@ d20835237fb29c3b3dfd417e6707dad8 *man/danks.Rd
 86ffc0729be2550b032df373d4d66975 *man/learnLegacy.Rd
 c4b7ce3d6e9578c9bfaf0e5618c52e6c *man/lexample.Rd
 a48cc86e3e8f3486e0028195d5868911 *man/modelStatistics.Rd
-16783c9e638c404e0071e914f07b5212 *man/ndl.package.Rd
+16f1eb33673105de7e406400b2bd18d6 *man/ndl.package.Rd
 a73531bde01bca632fdda04235345117 *man/ndlClassify.Rd
 ecc324d7188449568e570a3407ebb77e *man/ndlCrossvalidate.Rd
 3f06214b0fc1d5c919ea2d931f73a2dd *man/ndlCuesOutcomes.Rd
@@ -71,7 +72,7 @@ ba5f3273928646e211f66aa6c69f01c3 *man/serbianUniLat.Rd
 de5c6059ac272885cc9a0ede5694ece5 *man/summary.ndlClassify.Rd
 fefb8ce4cb7471ce0fcbf0bb56ee2bc3 *man/summary.ndlCrossvalidate.Rd
 8715f2e6ef38a3b7081a72c53b53ca7c *man/think.Rd
-a3b084d88ba9242baf03682c61f7e5f7 *src/Makevars
-46d5d81fa215e5395c39973d811f9dce *src/Makevars.win
-2678e40c4dc087d28e75495ea66a0308 *src/RcppExports.cpp
+2eacb446581b8939c89a09eb890e021f *src/Makevars
+a711b585ef70b81ec5e08930c5187d3a *src/Makevars.win
+0b953c21e98eaf3e09e1a857815f7bfc *src/RcppExports.cpp
 e53c9d15330d4d6a5a2648a62d8bd77c *src/learn.module.cpp

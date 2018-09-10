@@ -1,8 +1,8 @@
 Package: ndl
 Type: Package
 Title: Naive Discriminative Learning
-Version: 0.2.17
-Date: 2015-11-10
+Version: 0.2.18
+Date: 2018-09-09
 Authors@R: c(person("Antti Arppe", role = "aut", email = "arppe@ualberta.ca"),
     person("Peter Hendrix", role = "aut", email = "peter.hendrix@gmail.com"),
     person("Petar Milin", role = "aut", email = "pmilin@gmail.com"),
@@ -18,7 +18,8 @@ Depends: R (>= 3.0.2)
 Imports: Rcpp (>= 0.11.0), MASS, Hmisc
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2015-11-17 12:23:40 UTC; kfs-studium
+Packaged: 2018-09-10 09:06:55 UTC; tino
+RoxygenNote: 6.1.0
 Author: Antti Arppe [aut],
   Peter Hendrix [aut],
   Petar Milin [aut],
@@ -26,4 +27,4 @@ Author: Antti Arppe [aut],
   Tino Sering [aut, cre],
   Cyrus Shaoul [aut]
 Repository: CRAN
-Date/Publication: 2015-11-18 09:38:06
+Date/Publication: 2018-09-10 13:40:02 UTC

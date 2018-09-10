@@ -1,35 +1,32 @@
-\name{ndl.package}
-\alias{ndl.package}
+\name{ndl-package}
+\alias{ndl-package}
 \alias{ndl}
 \docType{package}
 \title{
-  Naive discriminative learning: an implementation in R
+\packageTitle{ndl}
 }
 \description{
-  Naive discriminative learning implements classification models based
-  on the Rescorla-Wagner equations and the equilibrium equations of
-  the Rescorla-Wagner equations.  This package provides three kinds of
-  functionality: (1) discriminative learning based directly on the
-  Rescorla-Wagner equations, (2) a function implementing the naive
-  discriminative reader, and a model for silent (single-word) reading,
-  and (3) a classifier based on the equilibrium equations.  The
-  functions and datasets for the naive discriminative reader model
-  make it possible to replicate the simulation results for Experiment
-  1 of Baayen et al. (2011).  The classifier is provided to allow for
-  comparisons between machine learning (svm, TiMBL, glm, random
-  forests, etc.) and discrimination learning.  Compared to standard
-  classification algorithms, naive discriminative learning may overfit
-  the data, albeit gracefully.
+\packageDescription{ndl}
+
+Naive discriminative learning implements classification models based
+on the Rescorla-Wagner equations and the equilibrium equations of
+the Rescorla-Wagner equations.  This package provides three kinds of
+functionality: (1) discriminative learning based directly on the
+Rescorla-Wagner equations, (2) a function implementing the naive
+discriminative reader, and a model for silent (single-word) reading,
+and (3) a classifier based on the equilibrium equations.  The
+functions and datasets for the naive discriminative reader model
+make it possible to replicate the simulation results for Experiment
+1 of Baayen et al. (2011).  The classifier is provided to allow for
+comparisons between machine learning (svm, TiMBL, glm, random
+forests, etc.) and discrimination learning.  Compared to standard
+classification algorithms, naive discriminative learning may overfit
+the data, albeit gracefully.
 }
 \details{
-\tabular{ll}{
-Package: \tab ndl\cr
-Type: \tab Package\cr
-Version: \tab 0.2.16\cr
-Date: \tab 2014-02-28\cr
-License: \tab GPL (>= 2)\cr
-LazyLoad: \tab yes\cr
-}
+The DESCRIPTION file:
+\packageDESCRIPTION{ndl}
+\packageIndices{ndl}
 
 For more detailed information on the core Rescorla-Wagner equations, see
 the functions \code{\link{RescorlaWagner}} and
@@ -70,12 +67,12 @@ of the package.
 The key function for naive discriminative classification is
 \code{\link{ndlClassify}}; see data sets \code{\link{think}} and
 \code{\link{dative}} for examples.
-} 
 
+}
 \author{
-Cyrus Shaoul, Antti Arppe, Peter Hendrix, Petar Milin, and R. Harald Baayen.
+\packageAuthor{ndl}
 
-Maintainer: Cyrus Shaoul <cyrus.shaoul@uni-tuebingen.de>
+Maintainer: \packageMaintainer{ndl}
 
 Author Contributions:
 Initial concept by R. Harald Baayen with contributions from Petar Milin
@@ -87,11 +84,14 @@ C by Petar Milin and Antti Arppe.
 
 Classification functionality developed further by Antti Arppe.
 
-In version 0.2.14 onwards, improvements to the NDL algorithm by Petar
-Milin and Cyrus Shaoul. In version 0.2.14 onwards, improved
+In version 0.2.14 to version 0.2.16, improvements to the NDL algorithm by Petar
+Milin and Cyrus Shaoul. In version 0.2.14 to version 0.2.16, improved
 performance optimizations (C++ and Rcpp) by Cyrus Shaoul.
-}
 
+From version 0.2.17 onwards bug fixes and cran compliance by Tino Sering.
+
+
+}
 \references{
   Baayen, R. H. and Milin, P.  and Filipovic Durdevic, D. and
   Hendrix, P. and Marelli, M., An amorphous model for morphological
@@ -104,10 +104,10 @@ performance optimizations (C++ and Rcpp) by Cyrus Shaoul.
   Arppe, A. and Baayen, R. H. (in prep.) Statistical classification
   and principles of human learning.
 }
-\keyword{ naive discriminative learning }
+\keyword{ package naive discriminative learning  }
 \examples{
 \dontrun{
-# Rescorla-Wagner 
+# Rescorla-Wagner
 data(lexample)
 
 lexample$Cues <- orthoCoding(lexample$Word, grams=1)
@@ -117,7 +117,7 @@ plot(lexample.rw)
 mtext("h - hand", 3, 1)
 
 data(numbers)
-     
+
 traceCues <- c( "exactly1", "exactly2", "exactly3", "exactly4", "exactly5",
    "exactly6", "exactly7", "exactly10", "exactly15")
 traceOutcomes <- c("1", "2", "3", "4", "5", "6", "7", "10", "15")

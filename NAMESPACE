@@ -22,7 +22,7 @@ importFrom("stats", "as.formula", "density", "formula", "pchisq", "pnorm",
         "rnorm", "sd", "terms", "terms.formula")
 importFrom("utils", "combn", "flush.console", "type.convert")
 
-importFrom(MASS,ginv)
+importFrom(MASS, ginv)
 importFrom(Rcpp, evalCpp)
 
 S3method(anova, ndlClassify)

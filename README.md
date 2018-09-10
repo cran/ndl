@@ -3,14 +3,7 @@
 The NDL package implements the Danks Equilibra ([read the paper here][1]) for
 the Rescorla Wagner model of learning ([read about the RW model here][2]).
 
-New in version 0.2.17, released on Nov 17th, 2015:
-
-* Bug fixes for incorrect counting of contingency table resulting in wrong
-  weights form estimateWeights.
-* Hmisc becomes dependency.
-* No new features.
-
-See NEWS for more extensive explanation of the changes.
+See NEWS for a list of recent changes to the package.
 
 The original paper that describes this model (and which you should use as a citation when reporting ndl models):
 
